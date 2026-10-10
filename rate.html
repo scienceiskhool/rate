@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#069494">
+<title>Rate Graph Quest · Science is Khool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Science is Khool · Tropical Punch — "Arcade Punch" game skin */
+:root {
+  --orange: #FF8243; --pink: #FFC0CB; --yellow: #FCE883; --teal: #069494; --teal-ink: #057A7A;
+  --orange-tint: #FFE6DA; --pink-tint: #FFEEF1; --yellow-tint: #FEF8D9; --teal-tint: #DDF2F2;
+  --ink: #1F2A2E; --muted: #56656A; --line: #E4E8E9; --bg: #FFFFFF;
+  --good: #1E9E62; --good-tint: #D8F3E4; --bad: #E2463A;
+  --b: 3px solid var(--ink);
+  --font: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 16px/1.5 var(--font); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+.wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.card { background: #fff; border: var(--b); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: var(--b); border-radius: 16px; padding: 14px 18px; font-weight: 800; font-size: 1.1rem; background: var(--orange); color: var(--ink); box-shadow: 0 5px 0 var(--ink); transition: transform .08s, box-shadow .08s; user-select: none; -webkit-user-select: none; }
+.btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.big { width: 100%; font-size: 1.12rem; text-transform: uppercase; letter-spacing: .03em; padding: 15px; }
+.btn.alt { background: #fff; } .btn.teal { background: var(--teal); color: #fff; } .btn.yellow { background: var(--yellow); }
+.btn.small { padding: 8px 14px; font-size: .95rem; box-shadow: 0 3px 0 var(--ink); }
+.pill { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 99px; padding: 2px 10px; background: #fff; color: var(--ink); }
+.icon-btn { width: 42px; height: 42px; border-radius: 12px; border: var(--b); background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 var(--ink); padding: 0; flex: none; }
+.icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.icon-btn svg { width: 20px; height: 20px; } .icon-btn.off { opacity: .45; }
+
+.topbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 2px solid var(--line); background: #fff; }
+.topbar .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-decoration: none; color: var(--ink); }
+.topbar .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--yellow); object-fit: cover; flex: none; }
+.topbar .brand > span { min-width: 0; }
+.topbar .brand b { font-weight: 800; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.topbar .brand small { display: block; font-size: .72rem; color: var(--muted); font-weight: 600; line-height: 1.2; }
+
+/* start */
+.start { display: grid; gap: 22px; grid-template-columns: 1fr; align-items: start; margin: auto 0; padding-block: 8px 20px; }
+.hero { background: var(--teal); color: #fff; padding: 22px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.hero h1 { margin: 4px 0 0; font-size: clamp(1.9rem, 6.5vw, 2.7rem); line-height: 1.08; font-weight: 800; }
+.hero h1 em { font-style: normal; background: var(--yellow); color: var(--ink); border: var(--b); border-radius: 14px; padding: 0 10px; display: inline-block; transform: rotate(-2deg); }
+.hero p { margin: 0; font-weight: 600; max-width: 44ch; }
+.hero-graph { background: #fff; border: var(--b); border-radius: 18px; padding: 8px; }
+.hero-graph svg { width: 100%; height: auto; display: block; }
+.form { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.form h2 { margin: 0; font-size: 1.25rem; font-weight: 800; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fields .full { grid-column: 1 / -1; }
+label.f, .f { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: .9rem; }
+label.f input, label.f select { font-size: 16px; padding: 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; width: 100%; min-width: 0; }
+label.f input:focus, label.f select:focus { outline: 3px solid var(--yellow); outline-offset: 1px; }
+.form-err { color: var(--bad); font-weight: 700; font-size: .9rem; min-height: 1.2em; margin: -4px 0 0; }
+.modes { display: grid; gap: 12px; }
+.mode { text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 16px; }
+.mode b { font-size: 1.15rem; } .mode span { font-weight: 600; font-size: .9rem; } .mode small { font-weight: 700; font-size: .8rem; opacity: .85; }
+.seg { display: flex; gap: 8px; flex-wrap: wrap; }
+.tap { font-weight: 800; font-size: 1rem; padding: 9px 14px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; box-shadow: 0 3px 0 var(--ink); min-width: 46px; }
+.tap[aria-pressed="true"] { background: var(--yellow); transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.tap:disabled { opacity: .55; cursor: default; }
+.seg.course .tap { flex: 1 1 140px; }
+.tap small { display: block; font-weight: 600; font-size: .78rem; color: var(--muted); }
+@media (min-width: 760px) { .start { grid-template-columns: 1.1fr 1fr; gap: 28px; } }
+
+/* shared bits */
+.svgbox { border: 2.5px solid var(--ink); border-radius: 16px; background: #fff; padding: 4px; }
+.svgbox svg { width: 100%; height: auto; display: block; }
+.svgbox.drag svg { touch-action: none; cursor: grab; }
+.svgbox, .tut-vis, .opts4 { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+body.dragging { user-select: none; -webkit-user-select: none; }
+.cap { font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 -4px 4px; }
+.hint { background: var(--yellow-tint); border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-weight: 600; font-size: .95rem; margin: 0; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .82rem; font-weight: 700; color: var(--muted); }
+.legend i { display: inline-block; width: 24px; height: 0; border-top: 3px dashed #56656A; vertical-align: middle; margin-right: 5px; }
+.legend i.n { border-top: 4px solid var(--orange); } .legend i.g { border-top: 4px dotted var(--good); } .legend i.t { border-top: 4px solid var(--teal); }
+.calc { background: #fff; border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-weight: 600; display: flex; flex-direction: column; gap: 3px; font-variant-numeric: tabular-nums; }
+.calc b { color: var(--teal-ink); }
+.key { background: var(--pink-tint); border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-weight: 700; margin: 0; }
+.txt p { margin: 0; }
+.cp { border: var(--b); border-radius: 16px; padding: 12px; background: var(--teal-tint); display: flex; flex-direction: column; gap: 8px; }
+.cp > p { margin: 0; font-weight: 800; }
+.cp .lbl { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-ink); }
+.choice { text-align: left; font-weight: 700; padding: 10px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; box-shadow: 0 3px 0 var(--ink); }
+.choice:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.choice.ok { background: var(--good-tint); } .choice.no { background: var(--orange-tint); }
+.choice:disabled { cursor: default; }
+.why { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 8px 12px; font-weight: 600; font-size: .95rem; }
+.why.ok { background: var(--good-tint); } .why.no { background: var(--orange-tint); }
+
+/* tutorial */
+.tut { border: var(--b); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); background: #fff; overflow: hidden; margin-block: 4px 16px; }
+.tut-head { background: var(--teal); color: #fff; padding: 12px 16px; display: flex; align-items: center; gap: 10px 12px; flex-wrap: wrap; border-bottom: var(--b); }
+.tut-head h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; font-weight: 800; flex: 1 1 14em; }
+.tut-head .pill { background: var(--yellow); }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots i { width: 20px; height: 9px; border-radius: 99px; background: rgba(255,255,255,.35); border: 2px solid var(--ink); }
+.dots i.now { background: #fff; } .dots i.ok { background: var(--yellow); } .dots i.no { background: var(--orange); } .dots i.half { background: var(--pink); }
+.tut-body { display: grid; grid-template-columns: 1fr; }
+.tut-vis { padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--yellow-tint); border-bottom: var(--b); }
+.tut-txt { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.slider-row { display: flex; align-items: center; gap: 10px; font-weight: 700; flex-wrap: wrap; }
+.slider-row input[type=range] { flex: 1 1 160px; accent-color: var(--orange); height: 30px; }
+.slider-row output { font-weight: 800; font-variant-numeric: tabular-nums; background: #fff; border: 2px solid var(--ink); border-radius: 10px; padding: 2px 8px; }
+.nav { display: flex; gap: 10px; margin-top: auto; padding-top: 4px; } .nav .btn { flex: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; } .chips .tap { font-size: .88rem; padding: 7px 10px; }
+.readout { display: flex; flex-direction: column; gap: 6px; }
+.readout div { border: 2.5px solid var(--ink); border-radius: 12px; padding: 8px 12px; font-weight: 700; background: #fff; }
+.readout div b { color: var(--teal-ink); }
+.rules { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.rules li { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-weight: 600; background: var(--yellow-tint); }
+.rules li:nth-child(2) { background: var(--pink-tint); }
+.rules li b { display: block; font-weight: 800; }
+@media (min-width: 860px) {
+  .tut-body { grid-template-columns: 1.05fr 1fr; }
+  .tut-vis { border-bottom: 0; border-right: var(--b); }
+}
+
+/* challenge */
+.play { display: grid; grid-template-columns: 1fr; border: var(--b); border-radius: 22px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); background: #fff; margin-block: 4px 16px; }
+.hud { background: var(--teal); color: #fff; padding: 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: var(--b); }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.score { font-size: 1.9rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { display: block; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; opacity: .9; margin-bottom: 2px; }
+.badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.lvl { background: var(--yellow); color: var(--ink); font-weight: 800; border: var(--b); border-radius: 10px; padding: 2px 10px; transform: rotate(-3deg); box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+.combo { background: var(--orange); color: var(--ink); font-weight: 800; border: var(--b); border-radius: 10px; padding: 2px 8px; transform: rotate(3deg); box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; font-size: .9rem; }
+.q-base { background: #fff; color: var(--ink); border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-size: .93rem; font-weight: 600; display: flex; flex-direction: column; gap: 4px; }
+.q-base .lbl, .q-change .lbl { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.q-base .eq { font-weight: 700; color: var(--teal-ink); }
+.q-base .data { font-size: .82rem; color: var(--muted); }
+.q-change { background: var(--yellow); color: var(--ink); border: var(--b); border-radius: 14px; padding: 10px 12px; font-weight: 800; transform: rotate(-.6deg); display: flex; flex-direction: column; gap: 2px; }
+.controls { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ask { font-weight: 800; font-size: 1.12rem; margin: 0; text-wrap: balance; }
+.ask small { display: block; font-weight: 600; font-size: .9rem; color: var(--muted); }
+.opts4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.optg { padding: 6px 6px 4px; border: var(--b); border-radius: 16px; background: #fff; box-shadow: 0 4px 0 var(--ink); display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.optg:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.optg b { font-size: 1rem; padding-left: 4px; } .optg svg { width: 100%; height: auto; display: block; }
+.optg.ok { background: var(--good-tint); } .optg.no { background: var(--orange-tint); }
+.optg:disabled { cursor: default; }
+.ctrl { display: flex; flex-direction: column; gap: 10px; }
+.ctrl-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ctrl-row > .lbl { font-weight: 800; min-width: 9.5em; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper output { min-width: 6em; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; border: 2.5px solid var(--ink); border-radius: 12px; padding: 7px 8px; background: #fff; }
+.reveal { background: var(--orange-tint); border: var(--b); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.reveal.good { background: var(--good-tint); }
+.reveal h3 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+.reveal p { margin: 0; font-weight: 600; }
+.reveal .parts { display: flex; flex-direction: column; gap: 4px; }
+.reveal .parts span { background: #fff; border: 2px solid var(--ink); border-radius: 10px; padding: 5px 10px; font-weight: 700; font-size: .93rem; }
+.quick-ans { position: fixed; left: 50%; top: 38%; translate: -50% -50%; z-index: 60; pointer-events: none; font-weight: 800; font-size: 1.3rem; padding: 12px 20px; border: var(--b); border-radius: 18px; box-shadow: 4px 4px 0 var(--ink); background: var(--orange-tint); text-align: center; animation: qa 1.2s ease-out forwards; }
+.quick-ans.ok { background: var(--good-tint); }
+@keyframes qa { 0% { opacity: 0; scale: .7; } 15% { opacity: 1; scale: 1.05; } 75% { opacity: 1; scale: 1; } 100% { opacity: 0; } }
+@media (min-width: 860px) {
+  .play { grid-template-columns: .85fr 1.15fr; }
+  .hud { border-bottom: 0; border-right: var(--b); padding: 18px; }
+  .controls { padding: 20px; }
+}
+#btn-hint { white-space: nowrap; flex: none; }
+@media (max-width: 480px) { .hud .dots i { width: 14px; } .hud .dots { gap: 4px; } }
+@media (max-width: 420px) { .opts4 { gap: 8px; } .ctrl-row > .lbl { min-width: 0; width: 100%; } }
+
+/* results */
+.results { display: grid; gap: 18px; grid-template-columns: 1fr; padding-block: 8px 20px; }
+.res-hero { background: var(--teal); color: #fff; padding: 22px; display: flex; gap: 18px; align-items: center; }
+.big-ring { --p: 0; width: 120px; height: 120px; flex: none; border-radius: 50%; border: var(--b); background: conic-gradient(var(--yellow) calc(var(--p) * 1%), #fff 0); display: grid; place-items: center; }
+.big-ring span { width: 88px; height: 88px; border-radius: 50%; background: #fff; color: var(--ink); border: var(--b); display: grid; place-items: center; font-weight: 800; font-size: 1.7rem; }
+.res-hero h2 { margin: 0 0 4px; font-size: 1.6rem; line-height: 1.15; font-weight: 800; } .res-hero p { margin: 0; font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.stat { border: var(--b); border-radius: 14px; padding: 8px 10px; box-shadow: 0 4px 0 var(--ink); }
+.stat span { display: block; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stat b { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat:nth-child(1) { background: var(--yellow-tint); } .stat:nth-child(2) { background: var(--pink-tint); } .stat:nth-child(3) { background: var(--teal-tint); } .stat:nth-child(4) { background: var(--orange-tint); }
+.panel { padding: 18px; display: flex; flex-direction: column; gap: 12px; } .panel h3 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: grid; grid-template-columns: 11.5em 1fr 3.2em; gap: 10px; align-items: center; font-weight: 700; font-size: .92rem; }
+.bar { height: 14px; border: 2px solid var(--ink); border-radius: 99px; overflow: hidden; background: #fff; }
+.bar i { display: block; height: 100%; background: var(--teal); } .bar i.low { background: var(--orange); }
+.bar-row .n { text-align: right; font-variant-numeric: tabular-nums; }
+.weak, .review { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.weak li { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: var(--orange-tint); }
+.weak li b { display: block; } .weak li span { font-size: .9rem; } .weak li.good { background: var(--good-tint); }
+.review li { border-bottom: 2px solid var(--line); padding: 6px 0 8px; font-size: .95rem; } .review li:last-child { border-bottom: 0; }
+.review .you { color: var(--bad); font-weight: 700; } .review .k { color: var(--good); font-weight: 800; }
+.send { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 700; padding: 12px 14px; border: 2.5px solid var(--ink); border-radius: 14px; background: var(--teal-tint); }
+.send.err { background: var(--orange-tint); }
+.res-actions { display: flex; gap: 12px; flex-wrap: wrap; } .res-actions .btn { flex: 1 1 200px; }
+@media (min-width: 760px) { .results { grid-template-columns: 1fr 1fr; align-items: start; } .results .span { grid-column: 1 / -1; } }
+@media (max-width: 480px) { .stats { grid-template-columns: repeat(2, 1fr); } .res-hero { flex-direction: column; text-align: center; } .bar-row { grid-template-columns: 8.8em 1fr 3em; font-size: .85rem; } }
+footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 14px 16px 20px; }
+footer a { color: var(--teal-ink); font-weight: 700; }
+canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+/* chart svg */
+svg text { font-family: var(--font); }
+.c-grid { stroke: #E4E8E9; stroke-width: 1; }
+.c-ax { stroke: #1F2A2E; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.c-lab { font-size: 12.5px; fill: #56656A; font-weight: 600; }
+.c-title { font-size: 13px; fill: #1F2A2E; font-weight: 800; }
+.c-orig { stroke: #56656A; stroke-width: 3; fill: none; stroke-dasharray: 7 6; stroke-linecap: round; }
+.c-new { stroke: #FF8243; stroke-width: 4.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.c-main { stroke: #069494; stroke-width: 4.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.c-good { stroke: #1E9E62; stroke-width: 4.5; fill: none; stroke-dasharray: 1 8; stroke-linecap: round; }
+.c-tan { stroke: #1F2A2E; stroke-width: 2.5; stroke-dasharray: 6 5; fill: none; }
+.c-tan-o { stroke: #56656A; stroke-width: 2; stroke-dasharray: 3 5; fill: none; opacity: .7; }
+.c-guide { stroke: #FF8243; stroke-width: 2; stroke-dasharray: 4 5; }
+.c-h { fill: #FCE883; stroke: #1F2A2E; stroke-width: 3; }
+.c-hit { fill: transparent; }
+.c-dot { fill: #fff; stroke: #1F2A2E; stroke-width: 2; }
+.c-tag { font-size: 12.5px; font-weight: 800; fill: #1F2A2E; }
+.c-tagbg { fill: #fff; stroke: #1F2A2E; stroke-width: 2; }
+.c-zone { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .quick-ans { animation: none !important; opacity: 0; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="https://scienceiskhool.github.io/scienceiskhool/" target="_blank" rel="noopener">
+    <img src="https://scienceiskhool.github.io/scienceiskhool/assets/img/head.png" alt="" onerror="this.style.visibility='hidden'">
+    <span><b>Rate Graph Quest</b><small>Science is Khool · Rate of reaction</small></span>
+  </a>
+  <button class="icon-btn" id="btn-sound" type="button" aria-label="Sound effects" title="Sound effects">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+  </button>
+  <button class="icon-btn" id="btn-full" type="button" aria-label="Full screen" title="Full screen" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+  </button>
+</header>
+
+<main class="wrap">
+  <!-- START -->
+  <section id="scr-start" class="start">
+    <div class="card hero">
+      <span class="pill" style="align-self:flex-start">Chemistry · Rate of reaction</span>
+      <h1>Rate Graph <em>Quest</em></h1>
+      <p>Learn to read rate of reaction graphs, then predict how the curve changes when the conditions change.</p>
+      <div class="hero-graph" id="hero-graph"></div>
+      <p style="font-size:.92rem">Two questions to ask every time: <b>Is it faster or slower?</b> (initial gradient) and <b>Is there more or less product?</b> (final height)</p>
+    </div>
+    <form class="card form" id="form-start" novalidate>
+      <h2>Sign in to play</h2>
+      <div class="fields">
+        <label class="f full" for="in-name">Name<input id="in-name" maxlength="60" autocomplete="name" required></label>
+        <label class="f" for="in-cls">Class<select id="in-cls" required><option value="">Choose…</option></select></label>
+        <label class="f" for="in-reg">Register no.<input id="in-reg" inputmode="numeric" pattern="[0-9]*" maxlength="2" required></label>
+        <div class="f full"><span>My course</span>
+          <div class="seg course" id="seg-course" role="group" aria-label="Course">
+            <button class="tap" type="button" data-course="combined" aria-pressed="false">Combined Science<small>Chemistry</small></button>
+            <button class="tap" type="button" data-course="pure" aria-pressed="false">Pure Chemistry<small>6092</small></button>
+          </div>
+        </div>
+      </div>
+      <p class="form-err" id="form-err" role="alert"></p>
+      <div class="modes">
+        <button class="btn mode yellow" type="submit" data-mode="tutorial"><b>📈 Tutorial: Read the graph</b><span>Volume of gas and mass of reaction mixture, step by step.</span><small id="tut-status">Recommended first</small></button>
+        <button class="btn mode teal" type="submit" data-mode="challenge"><b>🏆 Challenge: Predict the curve</b><span>10 questions: pick the curve, then drag it yourself.</span><small id="best-challenge">Best: 0</small></button>
+      </div>
+    </form>
+  </section>
+
+  <!-- TUTORIAL -->
+  <section id="scr-tut" class="tut" hidden>
+    <div class="tut-head">
+      <span class="pill" id="tut-part"></span>
+      <h2 id="tut-title"></h2>
+      <div class="dots" id="tut-dots"></div>
+      <button class="btn small alt" id="tut-exit" type="button">✕ Exit</button>
+    </div>
+    <div class="tut-body">
+      <div class="tut-vis" id="tut-vis"></div>
+      <div class="tut-txt txt">
+        <div id="tut-txt" style="display:flex;flex-direction:column;gap:12px"></div>
+        <div class="nav">
+          <button class="btn alt" id="tut-back" type="button">← Back</button>
+          <button class="btn" id="tut-next" type="button">Next →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALLENGE -->
+  <section id="scr-play" class="play" hidden>
+    <div class="hud">
+      <div class="row">
+        <div class="score"><small>Points</small><span id="txt-points">0</span></div>
+        <div class="badges"><span class="combo" id="txt-combo" hidden></span><span class="lvl" id="txt-count"></span></div>
+      </div>
+      <div class="row"><div class="dots" id="dots"></div><button class="btn small alt" id="btn-hint" type="button">💡 Hint</button></div>
+      <div class="q-base" id="q-base"></div>
+      <div class="q-change" id="q-change"></div>
+    </div>
+    <div class="controls">
+      <p class="hint" id="hint-box" hidden></p>
+      <div id="stage" style="display:flex;flex-direction:column;gap:14px"></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="scr-result" class="results" hidden>
+    <div class="card res-hero span">
+      <div class="big-ring" id="res-ring"><span id="res-pct">0%</span></div>
+      <div><h2 id="res-title"></h2><p id="res-msg"></p></div>
+    </div>
+    <div class="stats span" id="res-stats">
+      <div class="stat"><span id="res-l1"></span><b id="res-v1"></b></div>
+      <div class="stat"><span id="res-l2"></span><b id="res-v2"></b></div>
+      <div class="stat"><span>Time</span><b id="res-time">0:00</b></div>
+      <div class="stat"><span id="res-l4">Points</span><b id="res-v4">0</b></div>
+    </div>
+    <div class="card panel" id="res-panel1">
+      <h3>How you did</h3>
+      <div class="bars" id="res-bars"></div>
+      <h3 style="margin-top:6px">What to work on</h3>
+      <ul class="weak" id="res-weak"></ul>
+    </div>
+    <div class="card panel" id="res-panel2"><h3>Check your mistakes</h3><ul class="review" id="res-review"></ul></div>
+    <div class="send span" id="send" aria-live="polite"><span id="send-msg">Sending your results to Ms Khoo…</span><button class="btn small alt" id="btn-resend" type="button" hidden>Try again</button></div>
+    <div class="res-actions span">
+      <button class="btn big teal" id="btn-home" type="button">Home</button>
+      <button class="btn big" id="btn-again" type="button">Play again ↻</button>
+    </div>
+  </section>
+</main>
+<footer>Designed by Ms Khoo Xiang Yun · <a href="https://scienceiskhool.github.io/scienceiskhool/" target="_blank" rel="noopener">Science is Khool</a></footer>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+(function () {
+"use strict";
+
+/* =================== SETTINGS (safe to edit) =================== */
+var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbxCTjRCQzLlWXmmY-5R0p75WCmeFLzC9ZM3gNbGRXpcc_d9qHMXdyCn12B4dHpnrBWe/exec";
+var SHEET_TAB = "Rate";                      // tab name in your Google Sheet
+var ROUND = { pick: 3, why: 1, tier1: 2, tier2: 2, tier3: 2 };   // challenge: 4 MCQs, then 6 drag-the-curve questions
+var X_MAX = 180;                             // time axis (s) for challenge graphs
+var CLASSES = [];
+["S1", "S2", "S3", "S4"].forEach(function (l) { ["Charity", "Courage", "Faith", "Hope", "Humility", "Integrity", "Love", "Respect", "Joy"].forEach(function (v) { CLASSES.push(l + " " + v); }); });
+CLASSES.push("S5 Faith", "Other");
+
+/* =================== HELPERS =================== */
+var $ = function (id) { return document.getElementById(id); };
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem("sik:" + k)); localStorage.setItem("sik:" + k, JSON.stringify(v)); } catch (e) { return null; } }
+function mmss(s) { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+var uid = 0;
+
+/* =================== SOUND =================== */
+var Sound = {
+  on: store("sfx") !== false, ctx: null,
+  tone: function (f, type, d, g, delay) {
+    if (!this.on) return;
+    try {
+      this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === "suspended") this.ctx.resume();
+      var t = this.ctx.currentTime + (delay || 0), o = this.ctx.createOscillator(), v = this.ctx.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t); v.gain.setValueAtTime(g, t); v.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(v); v.connect(this.ctx.destination); o.start(t); o.stop(t + d);
+    } catch (e) {}
+  },
+  tap: function () { this.tone(440, "sine", .05, .04); },
+  ok: function () { this.tone(523, "sine", .12, .16); this.tone(659, "sine", .22, .16, .06); },
+  no: function () { this.tone(220, "triangle", .3, .14); this.tone(207, "triangle", .45, .12, .1); },
+  end: function () { [523, 659, 784, 1047].forEach(function (n, i) { Sound.tone(n, "square", .3, .06, i * .15); }); }
+};
+$("btn-sound").classList.toggle("off", !Sound.on);
+$("btn-sound").addEventListener("click", function () { Sound.on = !Sound.on; store("sfx", Sound.on); $("btn-sound").classList.toggle("off", !Sound.on); });
+if (document.fullscreenEnabled) { $("btn-full").hidden = false; $("btn-full").addEventListener("click", function () { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function () {}); }); }
+
+/* =================== CURVE MODEL ===================
+   value(t) = S + dir × A × (1 − e^(−g t / A))
+   S = starting value, A = total change (final volume or mass lost), g = initial gradient, dir = +1 (volume) or −1 (mass) */
+function cv(S, A, g, dir) { return { S: S, A: A, g: g, dir: dir }; }
+function val(c, t) { return c.S + c.dir * c.A * (1 - Math.exp(-c.g * t / c.A)); }
+function slope(c, t) { return c.dir * c.g * Math.exp(-c.g * t / c.A); }
+
+/* =================== CHART =================== */
+function frame(o) {
+  var W = o.w || 360, H = o.h || 250, m = o.mini ? { l: 6, r: 6, t: 6, b: 6 } : { l: o.dec ? 76 : 56, r: 14, t: 12, b: 40 };
+  var pw = W - m.l - m.r, ph = H - m.t - m.b, f = { W: W, H: H, o: o, m: m, id: "c" + (++uid) };
+  f.X = function (t) { return m.l + t / o.xMax * pw; };
+  f.Y = function (v) { return m.t + ph - (v - o.yMin) / (o.yMax - o.yMin) * ph; };
+  f.iX = function (x) { return (x - m.l) / pw * o.xMax; };
+  f.iY = function (y) { return o.yMin + (m.t + ph - y) / ph * (o.yMax - o.yMin); };
+  var s = '<defs><clipPath id="' + f.id + '"><rect x="' + m.l + '" y="' + (m.t - 2) + '" width="' + (pw + 2) + '" height="' + (ph + 2) + '"/></clipPath></defs>';
+  var anchor = o.anchor || 0, k0 = Math.ceil((o.yMin - anchor) / o.yStep - 1e-6), k1 = Math.floor((o.yMax - anchor) / o.yStep + 1e-6), le = o.labEvery || 1;
+  for (var k = k0; k <= k1; k++) {
+    var v = anchor + k * o.yStep, y = f.Y(v);
+    s += '<line class="c-grid" x1="' + m.l + '" x2="' + (m.l + pw) + '" y1="' + y + '" y2="' + y + '"/>';
+    if (!o.mini && ((k % le) + le) % le === 0) s += '<text class="c-lab" x="' + (m.l - 6) + '" y="' + (y + 4) + '" text-anchor="end">' + v.toFixed(o.dec || 0) + "</text>";
+  }
+  var xs = o.xStep || 30;
+  for (var t = 0; t <= o.xMax + 1e-6; t += xs) {
+    var x = f.X(t);
+    if (t > 0) s += '<line class="c-grid" x1="' + x + '" x2="' + x + '" y1="' + m.t + '" y2="' + (m.t + ph) + '"/>';
+    if (!o.mini) s += '<text class="c-lab" x="' + x + '" y="' + (m.t + ph + 15) + '" text-anchor="middle">' + t + "</text>";
+  }
+  s += '<path class="c-ax" d="M' + m.l + " " + m.t + " V" + (m.t + ph) + " H" + (m.l + pw) + '"/>';
+  if (!o.mini) {
+    s += '<text class="c-title" x="' + (m.l + pw / 2) + '" y="' + (H - 4) + '" text-anchor="middle">Time / s</text>';
+    s += '<text class="c-title" transform="translate(14 ' + (m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">' + esc(o.yLabel) + "</text>";
+  }
+  f.grid = s;
+  return f;
+}
+function pathOf(f, c, tEnd) {
+  tEnd = tEnd === undefined ? f.o.xMax : tEnd;
+  var n = Math.max(2, Math.ceil(120 * tEnd / f.o.xMax)), d = "";
+  for (var i = 0; i <= n; i++) { var t = tEnd * i / n; d += (i ? "L" : "M") + f.X(t).toFixed(1) + " " + f.Y(val(c, t)).toFixed(1); }
+  return d;
+}
+function curveSvg(f, c, cls, tEnd) { return '<path class="' + cls + '" clip-path="url(#' + f.id + ')" d="' + pathOf(f, c, tEnd) + '"/>'; }
+function svgWrap(f, inner) { return '<svg viewBox="0 0 ' + f.W + " " + f.H + '" role="img">' + f.grid + inner + "</svg>"; }
+function tag(x, y, text, anchor) {
+  var w = text.length * 7.2 + 12, x0 = anchor === "end" ? x - w : anchor === "middle" ? x - w / 2 : x;
+  return '<rect class="c-tagbg" x="' + x0 + '" y="' + (y - 13) + '" width="' + w + '" height="18" rx="6"/><text class="c-tag" x="' + (x0 + w / 2) + '" y="' + (y + 1) + '" text-anchor="middle">' + esc(text) + "</text>";
+}
+
+/* =================== EXPERIMENTS =================== */
+var EQ_MG = "Mg(s) + 2HCl(aq) → MgCl₂(aq) + H₂(g)", EQ_CA = "CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g)";
+var BASES = {
+  mgV:  { lim: "magnesium", kind: "vol", A0: 120, g0: 6, S0: 0, gas: "H₂", eq: EQ_MG, data: "Aᵣ: Mg = 24 · 1 mol of gas = 24 dm³ at r.t.p.",
+          desc: "0.12 g of magnesium ribbon + 50.0 cm³ of 1.0 mol/dm³ hydrochloric acid (in excess) at 25 °C. Hydrogen is collected in a gas syringe." },
+  mgVa: { lim: "the hydrochloric acid", kind: "vol", A0: 120, g0: 6, S0: 0, gas: "H₂", eq: EQ_MG, data: "1 mol of gas = 24 dm³ at r.t.p.",
+          desc: "Excess magnesium powder + 25.0 cm³ of 0.40 mol/dm³ hydrochloric acid at 25 °C. Hydrogen is collected in a gas syringe." },
+  caV:  { lim: "calcium carbonate", kind: "vol", A0: 240, g0: 8, S0: 0, gas: "CO₂", eq: EQ_CA, data: "Mᵣ: CaCO₃ = 100 · 1 mol of gas = 24 dm³ at r.t.p.",
+          desc: "1.00 g of calcium carbonate chips + 50.0 cm³ of 1.0 mol/dm³ hydrochloric acid (in excess) at 25 °C. Carbon dioxide is collected in a gas syringe." },
+  caVa: { lim: "the hydrochloric acid", kind: "vol", A0: 240, g0: 8, S0: 0, gas: "CO₂", eq: EQ_CA, data: "1 mol of gas = 24 dm³ at r.t.p.",
+          desc: "Excess calcium carbonate chips + 50.0 cm³ of 0.40 mol/dm³ hydrochloric acid at 25 °C. Carbon dioxide is collected in a gas syringe." },
+  caM:  { lim: "calcium carbonate", kind: "mass", A0: 0.44, g0: 0.44 / 30, S0: 150, gas: "CO₂", eq: EQ_CA, data: "Mᵣ: CaCO₃ = 100, CO₂ = 44",
+          desc: "1.00 g of calcium carbonate chips + 50.0 cm³ of 1.0 mol/dm³ hydrochloric acid (in excess) at 25 °C, in an open flask on a balance. Starting mass of flask + contents: 150.00 g." },
+  caMa: { lim: "the hydrochloric acid", kind: "mass", A0: 0.44, g0: 0.44 / 30, S0: 150, gas: "CO₂", eq: EQ_CA, data: "Mᵣ: CO₂ = 44",
+          desc: "Excess calcium carbonate chips + 50.0 cm³ of 0.40 mol/dm³ hydrochloric acid at 25 °C, in an open flask on a balance. Starting mass of flask + contents: 150.00 g." }
+};
+function isMass(b) { return b.kind === "mass"; }
+function yLabelOf(b) { return isMass(b) ? "Mass of flask + contents / g" : "Volume of " + b.gas + " / cm³"; }
+function fmt(b, v) { return isMass(b) ? v.toFixed(2) + " g" : Math.round(v) + " cm³"; }
+function finalWord(b) { return isMass(b) ? "Final mass" : "Final volume"; }
+
+/* =================== FACTORS =================== */
+var FACT = {
+  temp:    { label: "Temperature", tip: "Higher temperature → particles move faster and more collisions have energy ≥ activation energy → steeper initial gradient. The amount of product does not change." },
+  conc:    { label: "Concentration", tip: "Higher concentration → more reacting particles per unit volume → more frequent collisions → steeper. If the acid is the limiting reagent, also work out whether its moles changed." },
+  surface: { label: "Particle size", tip: "Powder or smaller pieces → larger total surface area → more frequent collisions → steeper. Same mass of solid → same final amount." },
+  cat:     { label: "Catalyst", tip: "A catalyst gives an alternative pathway with lower activation energy → steeper. It does not change the amount of product." },
+  amount:  { label: "Limiting reagent", tip: "Final volume (or mass lost) depends only on the moles of the LIMITING reagent. Double its moles → double the product." },
+  excess:  { label: "Reagent in excess", tip: "Adding more of a reagent that is already in excess does NOT change the final amount. Same concentration → same initial gradient." },
+  acid:    { label: "Type of acid", tip: "H₂SO₄ has 2 H⁺ per formula unit, so the same concentration gives more H⁺ → faster. Ethanoic acid is weak (partially ionised) → slower, but it still reacts completely." },
+  multi:   { label: "Two changes", tip: "Deal with each change separately: one decides the initial gradient, the other decides the final height." }
+};
+
+/* =================== QUESTION BANK ===================
+   g = how the initial gradient changes (×), f = how the final amount changes (×), S = new starting mass (mass graphs only)
+   accept = gradient answers accepted, types = which question formats can use it */
+function Q(id, base, course, tier, factor, change, g, f, why, x) {
+  x = x || {};
+  return { id: id, base: base, course: course, tier: tier, factor: factor, change: change, g: g, f: f, why: why,
+    accept: x.accept || [cat(g)], S: x.S, types: x.types || (tier === 1 ? ["pick", "why", "handle"] : ["handle"]) };
+}
+function cat(r) { return r > 1.2 ? "steeper" : r < 0.83 ? "less" : "same"; }
+var CAT_TXT = { steeper: "steeper", same: "the same", less: "less steep" };
+var CAT_R = { steeper: 2, same: 1, less: 0.5 };
+
+var QS = [
+  // ---------- Tier 1: rate factors ----------
+  Q("t1", "mgV", "both", 1, "temp", "The experiment is repeated at 40 °C instead of 25 °C.", 2, 1,
+    "Higher temperature → particles have more kinetic energy → more frequent effective collisions → steeper initial gradient. The mass of Mg (limiting) is unchanged → same final volume of 120 cm³."),
+  Q("t2", "caV", "both", 1, "temp", "The experiment is repeated at 15 °C instead of 25 °C.", 0.5, 1,
+    "Lower temperature → fewer effective collisions per second → less steep. Still 1.00 g of CaCO₃ (limiting) → same 240 cm³ of CO₂."),
+  Q("t3", "caM", "both", 1, "temp", "The experiment is repeated at 40 °C instead of 25 °C. Starting mass is still 150.00 g.", 2, 1,
+    "Faster reaction → the mass drops more steeply at the start. Same 1.00 g of CaCO₃ → same 0.44 g of CO₂ lost → final mass still 149.56 g."),
+  Q("t4", "caM", "both", 1, "temp", "The experiment is repeated at 15 °C instead of 25 °C. Starting mass is still 150.00 g.", 0.5, 1,
+    "Slower reaction → the mass drops less steeply. Same 1.00 g of CaCO₃ → same 0.44 g of CO₂ lost → final mass still 149.56 g."),
+  Q("c1", "mgV", "both", 1, "conc", "50.0 cm³ of 2.0 mol/dm³ HCl is used instead of 1.0 mol/dm³.", 2, 1,
+    "More acid particles per unit volume → more frequent collisions → steeper. Mg is still limiting (0.0050 mol), so the final volume stays at 120 cm³."),
+  Q("c2", "caV", "both", 1, "conc", "50.0 cm³ of 0.50 mol/dm³ HCl is used instead of 1.0 mol/dm³.", 0.5, 1,
+    "Lower concentration → less frequent collisions → less steep. 0.025 mol of HCl is still more than the 0.020 mol needed, so CaCO₃ is still limiting → 240 cm³."),
+  Q("c3", "caM", "both", 1, "conc", "50.0 cm³ of 2.0 mol/dm³ HCl is used instead of 1.0 mol/dm³. Starting mass is still 150.00 g.", 2, 1,
+    "Steeper drop. CaCO₃ is still limiting → same 0.44 g of CO₂ lost → final mass 149.56 g."),
+  Q("c4", "mgV", "both", 1, "conc", "50.0 cm³ of 0.50 mol/dm³ HCl is used instead of 1.0 mol/dm³.", 0.5, 1,
+    "Less steep. 0.025 mol of HCl is still more than the 0.010 mol needed, so Mg is still limiting → 120 cm³."),
+  Q("s1", "mgV", "both", 1, "surface", "0.12 g of magnesium powder is used instead of ribbon.", 2, 1,
+    "Powder has a larger total surface area → more frequent collisions → steeper. Same mass of Mg → same 120 cm³."),
+  Q("s2", "caV", "both", 1, "surface", "1.00 g of powdered calcium carbonate is used instead of chips.", 2, 1,
+    "Larger total surface area → more frequent collisions → steeper. Same mass of CaCO₃ → same 240 cm³."),
+  Q("s3", "caM", "both", 1, "surface", "1.00 g of larger calcium carbonate chips is used. Starting mass is still 150.00 g.", 0.5, 1,
+    "Larger chips → smaller total surface area → less steep. Same mass of CaCO₃ → same 0.44 g lost → final mass 149.56 g."),
+  Q("s4", "caVa", "both", 1, "surface", "Excess powdered calcium carbonate is used instead of excess chips.", 2, 1,
+    "Steeper (larger surface area). The acid is the limiting reagent and its moles (0.020 mol) have not changed → same 240 cm³."),
+  Q("k1", "mgV", "pure", 1, "cat", "A suitable catalyst is added.", 2, 1,
+    "A catalyst provides an alternative pathway with lower activation energy → more effective collisions → steeper. It does not change the moles of Mg → same 120 cm³."),
+  Q("k2", "caM", "pure", 1, "cat", "A suitable catalyst is added (it stays in the flask). Starting mass is still 150.00 g.", 2, 1,
+    "Faster → steeper drop. The catalyst is not used up and does not change the amount of CO₂ → final mass 149.56 g."),
+  Q("k3", "caV", "pure", 1, "cat", "A suitable catalyst is added.", 2, 1,
+    "Lower activation energy → more effective collisions → steeper. Same 1.00 g of CaCO₃ → same 240 cm³."),
+  Q("v1", "mgV", "both", 1, "excess", "100 cm³ of the same 1.0 mol/dm³ HCl is used instead of 50.0 cm³.", 1, 1,
+    "Same concentration → same collision frequency → same initial gradient. The acid was already in excess and Mg (limiting) is unchanged → same 120 cm³. No change at all!", { types: ["pick", "handle"] }),
+
+  // ---------- Tier 2: amounts & limiting reagent ----------
+  Q("a1", "mgV", "both", 2, "amount", "0.24 g of magnesium ribbon is used instead of 0.12 g (acid still in excess).", 1.5, 2,
+    "n(Mg) = 0.24 ÷ 24 = 0.010 mol → 0.010 mol H₂ → 0.010 × 24 000 = 240 cm³. More ribbon → larger total surface area → more frequent collisions → steeper initial gradient."),
+  Q("a2", "mgV", "both", 2, "amount", "0.06 g of magnesium ribbon is used instead of 0.12 g.", 0.75, 0.5,
+    "n(Mg) = 0.06 ÷ 24 = 0.0025 mol → 0.0025 × 24 000 = 60 cm³. Less ribbon → smaller total surface area → less frequent collisions → less steep."),
+  Q("a3", "caV", "both", 2, "amount", "2.00 g of calcium carbonate chips is used instead of 1.00 g (acid still in excess).", 1.5, 2,
+    "n(CaCO₃) = 2.00 ÷ 100 = 0.020 mol. It needs 0.040 mol HCl and 0.050 mol is present, so CaCO₃ is still limiting → 0.020 × 24 000 = 480 cm³. More chips → larger total surface area → more frequent collisions → steeper."),
+  Q("a4", "caM", "both", 2, "amount", "2.00 g of chips is used instead of 1.00 g (acid still in excess). The starting mass is now 151.00 g.", 1.5, 2,
+    "CO₂ lost = 0.020 mol × 44 = 0.88 g, so the final mass = 151.00 − 0.88 = 150.12 g. More chips → larger total surface area → more frequent collisions → steeper.", { S: 151 }),
+  Q("a5", "caV", "both", 2, "amount", "0.50 g of calcium carbonate chips is used instead of 1.00 g.", 0.75, 0.5,
+    "n(CaCO₃) = 0.50 ÷ 100 = 0.0050 mol → 0.0050 × 24 000 = 120 cm³. Fewer chips → smaller total surface area → less frequent collisions → less steep."),
+  Q("a6", "caM", "both", 2, "amount", "0.50 g of chips is used instead of 1.00 g. The starting mass is now 149.50 g.", 0.75, 0.5,
+    "CO₂ lost = 0.0050 mol × 44 = 0.22 g → final mass = 149.50 − 0.22 = 149.28 g. Fewer chips → smaller total surface area → less steep drop.", { S: 149.5 }),
+  Q("e1", "mgVa", "both", 2, "amount", "50.0 cm³ of the same 0.40 mol/dm³ HCl is used instead of 25.0 cm³.", 1, 2,
+    "HCl is the limiting reagent: 0.0500 × 0.40 = 0.020 mol HCl → 0.010 mol H₂ → 240 cm³. Same concentration → same initial gradient."),
+  Q("e2", "mgVa", "both", 2, "conc", "25.0 cm³ of 0.80 mol/dm³ HCl is used instead of 0.40 mol/dm³.", 2, 2,
+    "Higher concentration → steeper. HCl is limiting and its moles double (0.020 mol) → 0.010 mol H₂ → 240 cm³."),
+  Q("e3", "caVa", "both", 2, "conc", "50.0 cm³ of 0.20 mol/dm³ HCl is used instead of 0.40 mol/dm³.", 0.5, 0.5,
+    "Lower concentration → less steep. HCl (limiting) halves to 0.010 mol → 0.0050 mol CO₂ → 120 cm³."),
+  Q("e4", "caVa", "both", 2, "excess", "Even more calcium carbonate chips are added (still in excess).", 1.5, 1,
+    "HCl is the limiting reagent and is unchanged → same 240 cm³. More chips → larger total surface area → more frequent collisions → steeper."),
+  Q("e5", "mgVa", "both", 2, "conc", "25.0 cm³ of water is added to the 25.0 cm³ of 0.40 mol/dm³ HCl before the reaction.", 0.5, 1,
+    "Water dilutes the acid to 0.20 mol/dm³ → less steep. The moles of HCl (0.010 mol) are unchanged → same 120 cm³."),
+  Q("e6", "caVa", "both", 2, "conc", "50.0 cm³ of 0.80 mol/dm³ HCl is used instead of 0.40 mol/dm³ (CaCO₃ still in excess).", 2, 2,
+    "Higher concentration → steeper. HCl (limiting) doubles to 0.040 mol → 0.020 mol CO₂ → 480 cm³."),
+
+  // ---------- Tier 3: traps ----------
+  Q("x1", "caVa", "both", 3, "multi", "100 cm³ of 0.20 mol/dm³ HCl is used instead of 50.0 cm³ of 0.40 mol/dm³.", 0.5, 1,
+    "Half the concentration → less steep. But moles of HCl = 0.100 × 0.20 = 0.020 mol — unchanged → same 240 cm³."),
+  Q("x2", "mgVa", "both", 3, "multi", "12.5 cm³ of the same 0.40 mol/dm³ HCl is used, and the temperature is raised to 40 °C.", 2, 0.5,
+    "Higher temperature → steeper (the concentration is unchanged). HCl (limiting) halves to 0.0050 mol → 0.0025 mol H₂ → 60 cm³."),
+  Q("x3", "caM", "both", 3, "multi", "1.00 g of powdered CaCO₃ and 2.0 mol/dm³ HCl are used. Starting mass is still 150.00 g.", 3, 1,
+    "Both changes speed the reaction up → much steeper drop. CaCO₃ is still limiting → same 0.44 g lost → final mass 149.56 g."),
+  Q("x4", "caMa", "both", 3, "conc", "50.0 cm³ of 0.80 mol/dm³ HCl is used instead of 0.40 mol/dm³. Starting mass is still 150.00 g.", 2, 2,
+    "Steeper drop. HCl (limiting) doubles to 0.040 mol → 0.020 mol CO₂ = 0.88 g lost → final mass 150.00 − 0.88 = 149.12 g."),
+  Q("x5", "caVa", "both", 3, "multi", "25.0 cm³ of 0.80 mol/dm³ HCl is used instead of 50.0 cm³ of 0.40 mol/dm³.", 2, 1,
+    "Double the concentration → steeper. Moles of HCl = 0.0250 × 0.80 = 0.020 mol — unchanged → same 240 cm³."),
+  Q("p1", "mgV", "pure", 3, "acid", "50.0 cm³ of 1.0 mol/dm³ sulfuric acid is used instead of hydrochloric acid.", 2, 1,
+    "H₂SO₄ releases 2 H⁺ per formula unit → [H⁺] = 2.0 mol/dm³ → steeper. Mg is still limiting → 120 cm³."),
+  Q("p2", "mgVa", "pure", 3, "acid", "25.0 cm³ of 0.40 mol/dm³ sulfuric acid is used instead of hydrochloric acid.", 2, 2,
+    "[H⁺] doubles → steeper. Mg + H₂SO₄ → MgSO₄ + H₂: 0.010 mol H₂SO₄ → 0.010 mol H₂ → 240 cm³."),
+  Q("p3", "mgV", "pure", 3, "acid", "50.0 cm³ of 1.0 mol/dm³ ethanoic acid is used instead of hydrochloric acid.", 0.5, 1,
+    "Ethanoic acid is weak — only partially ionised, so fewer H⁺ ions → less steep. There is still enough acid to react with all the Mg → 120 cm³."),
+  Q("p4", "mgVa", "pure", 3, "acid", "25.0 cm³ of 0.40 mol/dm³ ethanoic acid is used instead of hydrochloric acid.", 0.5, 1,
+    "Weak acid → fewer H⁺ ions at any moment → less steep. As H⁺ is used up, more ethanoic acid ionises, so all 0.010 mol eventually reacts → same 120 cm³."),
+  Q("p5", "caV", "pure", 3, "multi", "A catalyst is added and the temperature is raised to 40 °C.", 3, 1,
+    "Both changes increase the rate → much steeper. Neither changes the moles of CaCO₃ → same 240 cm³.")
+];
+
+/* =================== START =================== */
+var G = null, TUT = null, course = store("rate-course") || "";
+function show(id) { stopSim(); ["scr-start", "scr-tut", "scr-play", "scr-result"].forEach(function (s) { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+function paintStart() {
+  $("best-challenge").textContent = "Best: " + (store("rate-best-" + (course || "combined")) || 0) + " points";
+  $("tut-status").textContent = store("rate-tut-done") ? "✓ Done · replay any time" : "Recommended first";
+  Array.prototype.forEach.call(document.querySelectorAll("#seg-course .tap"), function (b) { b.setAttribute("aria-pressed", b.dataset.course === course ? "true" : "false"); });
+}
+(function () {
+  var sel = $("in-cls");
+  CLASSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c; sel.appendChild(o); });
+  var s = store("student") || {};
+  if (s.name) $("in-name").value = s.name;
+  if (s.cls && CLASSES.indexOf(s.cls) > -1) sel.value = s.cls;
+  if (s.reg) $("in-reg").value = s.reg;
+  // hero graph
+  var f = frame({ xMax: 150, yMin: 0, yMax: 270, yStep: 30, labEvery: 3, yLabel: "Volume of gas / cm³", w: 360, h: 200 });
+  $("hero-graph").innerHTML = svgWrap(f, curveSvg(f, cv(0, 120, 6, 1), "c-orig") + curveSvg(f, cv(0, 240, 16, 1), "c-new") +
+    tag(f.X(52), f.Y(240) - 8, "faster + more product", "start") + tag(f.X(150) - 4, f.Y(120) + 22, "original", "end"));
+  paintStart();
+})();
+Array.prototype.forEach.call(document.querySelectorAll("#seg-course .tap"), function (b) {
+  b.addEventListener("click", function () { course = b.dataset.course; store("rate-course", course); Sound.tap(); paintStart(); $("form-err").textContent = ""; });
+});
+var lastMode = "tutorial";
+Array.prototype.forEach.call(document.querySelectorAll("#form-start [data-mode]"), function (b) { b.addEventListener("click", function () { lastMode = b.dataset.mode; }); });
+$("form-start").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var mode = (e.submitter && e.submitter.dataset.mode) || lastMode;
+  var name = $("in-name").value.trim(), cls = $("in-cls").value, reg = $("in-reg").value.trim();
+  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !/^\d{1,2}$/.test(reg) ? "Please type your register number (numbers only)." : !course ? "Please choose Combined Science or Pure Chemistry." : "";
+  $("form-err").textContent = err; if (err) return;
+  store("student", { name: name, cls: cls, reg: reg });
+  Sound.tone(1, "sine", .01, .0001);
+  var st = { name: name, cls: cls, reg: reg };
+  if (mode === "tutorial") startTut(st); else startGame(st);
+});
+
+/* =================== APPARATUS + SIMULATION =================== */
+var SIM = { raf: 0, t: 0, running: false, bubbles: [] };
+function stopSim() { cancelAnimationFrame(SIM.raf); SIM.running = false; }
+var TUT_MG = cv(0, 120, 6, 1), TUT_CA = cv(150, 0.44, 0.44 / 30, -1);
+function apparatusVol() {
+  var ticks = "";
+  for (var v = 0; v <= 150; v += 25) { var x = 190 + v / 150 * 112; ticks += '<line x1="' + x + '" x2="' + x + '" y1="12" y2="' + (v % 50 ? 17 : 20) + '" stroke="#1F2A2E" stroke-width="1.5"/>' + (v % 50 ? "" : '<text x="' + x + '" y="8" font-size="8" text-anchor="middle" fill="#56656A" font-weight="700">' + v + "</text>"); }
+  return '<svg viewBox="0 0 340 190" role="img" aria-label="Flask of magnesium and acid connected to a gas syringe">' +
+    '<g stroke="#1F2A2E" stroke-width="3" stroke-linejoin="round">' +
+    '<path d="M62 50 L62 82 L22 168 Q20 176 30 176 L110 176 Q120 176 118 168 L78 82 L78 50 Z" fill="#fff"/>' +
+    '<path d="M40 130 L100 130 L118 168 Q120 176 110 176 L30 176 Q20 176 22 168 Z" fill="#DDF2F2" stroke-width="0"/>' +
+    '<path d="M62 50 L62 82 L22 168 Q20 176 30 176 L110 176 Q120 176 118 168 L78 82 L78 50" fill="none"/>' +
+    '<rect id="rib" x="50" y="164" width="40" height="6" rx="2" fill="#A9B4B7" stroke-width="2"/>' +
+    '<g id="bub" stroke-width="1.5" fill="#fff"></g>' +
+    '<rect x="57" y="38" width="26" height="16" rx="3" fill="#56656A"/>' +
+    '<path d="M70 38 V25 H178" fill="none" stroke-width="5"/><path d="M70 38 V25 H178" fill="none" stroke="#fff" stroke-width="1.5"/>' +
+    '<rect id="gas" x="186" y="14" width="0" height="20" fill="#FEF8D9" stroke-width="0"/>' +
+    '<rect x="182" y="12" width="128" height="24" rx="4" fill="none"/>' +
+    '<rect x="175" y="20" width="8" height="9" fill="#fff" stroke-width="2"/>' +
+    '<g id="plg"><rect x="0" y="14" width="6" height="20" fill="#FF8243" stroke-width="2"/><rect x="6" y="21" width="118" height="6" fill="#fff" stroke-width="2"/><rect x="124" y="12" width="6" height="24" rx="2" fill="#FF8243" stroke-width="2"/></g>' +
+    "</g>" + ticks +
+    '<text x="246" y="52" font-size="11" font-weight="800" text-anchor="middle" fill="#1F2A2E">gas syringe</text>' +
+    '<text x="70" y="188" font-size="10.5" font-weight="700" text-anchor="middle" fill="#56656A">Mg ribbon + HCl(aq)</text>' +
+    '<text id="rd" x="246" y="118" font-size="26" font-weight="800" text-anchor="middle" fill="#057A7A">0 cm³</text>' +
+    '<text id="tt" x="246" y="142" font-size="13" font-weight="700" text-anchor="middle" fill="#56656A">t = 0 s</text></svg>';
+}
+function apparatusMass() {
+  return '<svg viewBox="0 0 340 190" role="img" aria-label="Flask of calcium carbonate and acid with cotton wool, on a balance">' +
+    '<g stroke="#1F2A2E" stroke-width="3" stroke-linejoin="round">' +
+    '<g id="esc" stroke-width="1.5" fill="#FEF8D9"></g>' +
+    '<path d="M77 40 L77 70 L42 138 Q40 144 48 144 L122 144 Q130 144 128 138 L93 70 L93 40 Z" fill="#fff"/>' +
+    '<path d="M59 105 L111 105 L128 138 Q130 144 122 144 L48 144 Q40 144 42 138 Z" fill="#DDF2F2" stroke-width="0"/>' +
+    '<path d="M77 40 L77 70 L42 138 Q40 144 48 144 L122 144 Q130 144 128 138 L93 70 L93 40" fill="none"/>' +
+    '<g id="chips" fill="#fff" stroke-width="2"></g>' +
+    '<g id="bub" stroke-width="1.5" fill="#fff"></g>' +
+    '<g fill="#fff" stroke-width="2"><circle cx="79" cy="38" r="7"/><circle cx="91" cy="38" r="7"/><circle cx="85" cy="31" r="8"/></g>' +
+    '<rect x="16" y="144" width="138" height="6" rx="2" fill="#E4E8E9"/>' +
+    '<rect x="8" y="150" width="154" height="32" rx="7" fill="#fff"/>' +
+    '<rect x="38" y="156" width="94" height="20" rx="4" fill="#1F2A2E" stroke-width="0"/></g>' +
+    '<text id="rd" x="85" y="171" font-size="14" font-weight="800" text-anchor="middle" fill="#FCE883" font-family="ui-monospace,Menlo,monospace">150.00 g</text>' +
+    '<text x="122" y="26" font-size="10.5" font-weight="700" fill="#56656A">cotton wool</text>' +
+    '<text x="246" y="40" font-size="11" font-weight="800" text-anchor="middle" fill="#1F2A2E">CO₂ escapes → mass falls</text>' +
+    '<text id="rd2" x="246" y="104" font-size="26" font-weight="800" text-anchor="middle" fill="#057A7A">150.00 g</text>' +
+    '<text id="tt" x="246" y="128" font-size="13" font-weight="700" text-anchor="middle" fill="#56656A">t = 0 s</text>' +
+    '<text x="85" y="160" font-size="0">balance</text></svg>';
+}
+var CHIP_PTS = [[62, 140], [74, 138], [86, 141], [98, 138], [110, 140], [68, 133], [92, 133], [80, 131]];
+function drawApparatus(kind, t) {
+  var c = kind === "vol" ? TUT_MG : TUT_CA, v = val(c, t), left = 1 - Math.abs(v - c.S) / c.A;
+  if (kind === "vol") {
+    var p = 190 + v / 150 * 112, plg = $("plg"), gas = $("gas"), rib = $("rib");
+    if (!plg) return;
+    plg.setAttribute("transform", "translate(" + (p - 2) + " 0)");
+    gas.setAttribute("width", Math.max(0, p - 2 - 186));
+    var w = 40 * left; rib.setAttribute("x", 70 - w / 2); rib.setAttribute("width", Math.max(0, w)); rib.style.opacity = left < .01 ? 0 : 1;
+    $("rd").textContent = Math.round(v) + " cm³";
+  } else {
+    if (!$("chips")) return;
+    var sc = Math.sqrt(Math.max(0, left));
+    $("chips").innerHTML = left < .01 ? "" : CHIP_PTS.map(function (q) { var r = 5 * sc; return '<path d="M' + (q[0] - r) + " " + q[1] + " L" + (q[0] - r * .3) + " " + (q[1] - r) + " L" + (q[0] + r) + " " + (q[1] - r * .4) + " L" + (q[0] + r * .6) + " " + (q[1] + r * .5) + ' Z"/>'; }).join("");
+    $("rd").textContent = v.toFixed(2) + " g"; $("rd2").textContent = v.toFixed(2) + " g";
+  }
+  $("tt").textContent = "t = " + Math.round(t) + " s";
+}
+function stepBubbles(kind, t, dt) {
+  var c = kind === "vol" ? TUT_MG : TUT_CA, rate = Math.abs(slope(c, t)) / c.g, top = kind === "vol" ? 132 : 107;
+  var src = kind === "vol" ? [52, 88, 166] : [56, 112, 136];
+  if (SIM.running && Math.random() < rate * dt * 45) SIM.bubbles.push({ x: src[0] + Math.random() * (src[1] - src[0]), y: src[2], r: 2 + Math.random() * 2.5, esc: false });
+  SIM.bubbles.forEach(function (b) { b.y -= dt * (b.esc ? 30 : 60); if (!b.esc && b.y < top) { if (kind === "mass") { b.esc = true; b.x = 80 + Math.random() * 10; b.y = 22; } else b.dead = true; } if (b.esc && b.y < 2) b.dead = true; });
+  SIM.bubbles = SIM.bubbles.filter(function (b) { return !b.dead; });
+  var g = $("bub"), e = $("esc");
+  if (g) g.innerHTML = SIM.bubbles.filter(function (b) { return !b.esc; }).map(function (b) { return '<circle cx="' + b.x.toFixed(1) + '" cy="' + b.y.toFixed(1) + '" r="' + b.r.toFixed(1) + '"/>'; }).join("");
+  if (e) e.innerHTML = SIM.bubbles.filter(function (b) { return b.esc; }).map(function (b) { return '<circle cx="' + b.x.toFixed(1) + '" cy="' + b.y.toFixed(1) + '" r="' + b.r.toFixed(1) + '"/>'; }).join("");
+}
+function runSim(kind, onFrame, onDone) {
+  stopSim(); SIM.t = 0; SIM.bubbles = []; SIM.running = true;
+  var last = performance.now(), SPEED = 25, END = 150;
+  (function loop(now) {
+    var dt = Math.min(.05, (now - last) / 1000); last = now;
+    SIM.t = Math.min(END, SIM.t + dt * SPEED);
+    drawApparatus(kind, SIM.t); stepBubbles(kind, SIM.t, dt); if (onFrame) onFrame(SIM.t);
+    if (SIM.t < END) SIM.raf = requestAnimationFrame(loop);
+    else { SIM.running = false; if (onDone) onDone(); }
+  })(last);
+}
+
+/* =================== TUTORIAL =================== */
+function tutFrameVol() { return frame({ xMax: 150, yMin: 0, yMax: 150, yStep: 30, yLabel: "Volume of H₂ / cm³" }); }
+function tutFrameMass() { return frame({ xMax: 150, yMin: 149.4, yMax: 150.1, yStep: 0.1, anchor: 150, dec: 2, yLabel: "Mass of flask + contents / g" }); }
+function traceSvg(f, c, t) {
+  var s = curveSvg(f, c, "c-main", Math.max(0.5, t));
+  for (var k = 10; k <= t + 1e-6; k += 10) s += '<circle class="c-dot" r="3.2" cx="' + f.X(k).toFixed(1) + '" cy="' + f.Y(val(c, k)).toFixed(1) + '"/>';
+  if (t > 0) s += '<circle r="6" fill="#FF8243" stroke="#1F2A2E" stroke-width="2.5" cx="' + f.X(t) + '" cy="' + f.Y(val(c, t)) + '"/>';
+  return s;
+}
+function graphBox(cap, id) { return (cap ? '<p class="cap">' + cap + "</p>" : "") + '<div class="svgbox" id="' + id + '"></div>'; }
+function tangentSvg(f, c, t, half) {
+  var v = val(c, t), m = slope(c, t), t1 = Math.max(0, t - half), t2 = Math.min(f.o.xMax, t + half);
+  return '<line class="c-tan" clip-path="url(#' + f.id + ')" x1="' + f.X(t1) + '" y1="' + f.Y(v + m * (t1 - t)) + '" x2="' + f.X(t2) + '" y2="' + f.Y(v + m * (t2 - t)) + '"/>' +
+    '<circle r="6" fill="#FCE883" stroke="#1F2A2E" stroke-width="2.5" cx="' + f.X(t) + '" cy="' + f.Y(v) + '"/>';
+}
+function checkpoint(el, key, q, opts, ans, why) {
+  var order = shuffle(opts.map(function (o, i) { return i; }));
+  el.innerHTML = '<div class="cp"><span class="lbl">Quick check</span><p>' + q + "</p>" +
+    order.map(function (i) { return '<button class="choice" type="button" data-i="' + i + '">' + opts[i] + "</button>"; }).join("") + '<div class="why" hidden></div></div>';
+  var done = TUT.cp[key] !== undefined && TUT.solved[key];
+  Array.prototype.forEach.call(el.querySelectorAll(".choice"), function (b) {
+    if (done && +b.dataset.i === ans) { b.classList.add("ok"); }
+    b.addEventListener("click", function () {
+      if (TUT.solved[key]) return;
+      var i = +b.dataset.i, ok = i === ans, w = el.querySelector(".why");
+      if (TUT.cp[key] === undefined) TUT.cp[key] = ok;
+      if (ok) {
+        TUT.solved[key] = true; b.classList.add("ok"); Sound.ok();
+        Array.prototype.forEach.call(el.querySelectorAll(".choice"), function (x) { x.disabled = true; });
+        w.hidden = false; w.className = "why ok"; w.innerHTML = "<b>✓ Yes!</b> " + why;
+        paintTutNav();
+      } else {
+        b.classList.add("no"); b.disabled = true; Sound.no();
+        w.hidden = false; w.className = "why no"; w.innerHTML = "<b>Not quite.</b> Read the explanation above and try again.";
+      }
+    });
+  });
+  if (done) { var w = el.querySelector(".why"); w.hidden = false; w.className = "why ok"; w.innerHTML = "<b>✓ Yes!</b> " + why; Array.prototype.forEach.call(el.querySelectorAll(".choice"), function (x) { x.disabled = true; }); }
+}
+function runButton(label) { return '<button class="btn teal" id="btn-run" type="button">▶ ' + label + "</button>"; }
+
+var STEPS = [
+  { part: "Part A · Volume of gas", title: "Collecting a gas over time",
+    render: function (vis, txt) {
+      vis.innerHTML = '<div class="svgbox">' + apparatusVol() + "</div>" + graphBox("Volume of H₂ against time", "g1");
+      var f = tutFrameVol(), draw = function (t) { $("g1").innerHTML = svgWrap(f, traceSvg(f, TUT_MG, t)); };
+      draw(0); drawApparatus("vol", 0);
+      txt.innerHTML = '<div class="calc"><b>' + EQ_MG + "</b><span>0.12 g of Mg ribbon + 50.0 cm³ of 1.0 mol/dm³ HCl (excess)</span></div>" +
+        "<p>As hydrogen forms, it pushes the plunger of the gas syringe out. We read the volume every 10 s and plot <b>volume of gas</b> against <b>time</b>.</p>" +
+        runButton("Run the reaction") + '<p class="key" id="watch">Watch the bubbles and the graph together. What happens to the bubbling as the curve flattens?</p>';
+      $("btn-run").addEventListener("click", function () {
+        var b = this; b.disabled = true; b.textContent = "Reacting…"; Sound.tap();
+        runSim("vol", draw, function () { b.disabled = false; b.textContent = "↻ Run again"; $("watch").innerHTML = "The bubbling is <b>fast at first</b>, then <b>slows down</b>, then <b>stops</b> — and the graph does the same: steep → less steep → flat."; TUT.ran = true; });
+      });
+    } },
+  { part: "Part A · Volume of gas", title: "Gradient = rate of reaction", cp: "a2",
+    render: function (vis, txt) {
+      vis.innerHTML = graphBox("Drag the slider to move the tangent", "g1");
+      var f = tutFrameVol(), out;
+      var draw = function (t) {
+        $("g1").innerHTML = svgWrap(f, curveSvg(f, TUT_MG, "c-main") + tangentSvg(f, TUT_MG, t, 30));
+        out.textContent = slope(TUT_MG, t).toFixed(1) + " cm³/s";
+      };
+      txt.innerHTML = "<p>The <b>gradient</b> (steepness) of the curve tells you the <b>rate</b>: how many cm³ of gas are made per second. To find the rate at a moment, draw a <b>tangent</b> and work out its gradient.</p>" +
+        '<div class="slider-row"><label for="sl-t">Time</label><input type="range" id="sl-t" min="0" max="150" step="1" value="0"><span>Gradient = <output id="sl-out"></output></span></div>' +
+        '<p class="key">The <b>initial gradient</b> (tangent at t = 0) is the <b>initial rate</b>. It is the steepest part because the acid is most concentrated at the start → most frequent collisions. As acid is used up, collisions become less frequent and the gradient decreases.</p><div id="cp"></div>';
+      out = $("sl-out"); draw(0);
+      $("sl-t").addEventListener("input", function () { draw(+this.value); });
+      checkpoint($("cp"), "a2", "When is the rate of reaction fastest?", ["At the start (t = 0 s)", "Halfway through the reaction", "At the end, when the line is flat", "The rate is the same throughout"], 0,
+        "The tangent is steepest at t = 0. The concentration of acid is highest at the start, so collisions are most frequent.");
+    } },
+  { part: "Part A · Volume of gas", title: "When the curve goes flat", cp: "a3",
+    render: function (vis, txt) {
+      vis.innerHTML = graphBox("Three parts of the curve", "g1");
+      var f = tutFrameVol();
+      var zones = '<rect class="c-zone" fill="#FEF8D9" x="' + f.X(0) + '" y="' + f.m.t + '" width="' + (f.X(20) - f.X(0)) + '" height="' + (f.Y(0) - f.m.t) + '"/>' +
+        '<rect class="c-zone" fill="#FFEEF1" x="' + f.X(20) + '" y="' + f.m.t + '" width="' + (f.X(95) - f.X(20)) + '" height="' + (f.Y(0) - f.m.t) + '"/>' +
+        '<rect class="c-zone" fill="#DDF2F2" x="' + f.X(95) + '" y="' + f.m.t + '" width="' + (f.X(150) - f.X(95)) + '" height="' + (f.Y(0) - f.m.t) + '"/>';
+      $("g1").innerHTML = svgWrap(f, zones + curveSvg(f, TUT_MG, "c-main") + tag(f.X(4), f.Y(140), "① steep", "start") + tag(f.X(40), f.Y(70), "② less steep", "start") + tag(f.X(148), f.Y(140), "③ flat", "end"));
+      txt.innerHTML = '<ol class="rules"><li><b>① Steep</b>Fast reaction: lots of reactant particles, frequent collisions.</li><li><b>② Less steep</b>Reactants are being used up, so the rate decreases.</li><li style="background:var(--teal-tint)"><b>③ Flat (gradient = 0)</b>The reaction has stopped: the <u>limiting reagent</u> is used up. No more gas is made.</li></ol>' +
+        '<p class="key">The acid here is <b>in excess</b>, so magnesium is the limiting reagent.</p><div id="cp"></div>';
+      checkpoint($("cp"), "a3", "After about 120 s, the curve is flat. Why?", ["All the magnesium has reacted", "All the hydrochloric acid has reacted", "The reaction has reached its maximum speed", "The gas syringe is full"], 0,
+        "Mg is the limiting reagent (the acid is in excess). Once all the Mg has reacted, no more H₂ forms, so the volume stays constant.");
+    } },
+  { part: "Part A · Volume of gas", title: "Final volume ↔ moles of limiting reagent", cp: "a4",
+    render: function (vis, txt) {
+      vis.innerHTML = graphBox("The final volume is fixed by the limiting reagent", "g1");
+      var f = tutFrameVol();
+      $("g1").innerHTML = svgWrap(f, '<line class="c-guide" x1="' + f.X(0) + '" x2="' + f.X(150) + '" y1="' + f.Y(120) + '" y2="' + f.Y(120) + '"/>' + curveSvg(f, TUT_MG, "c-main") + tag(f.X(148), f.Y(120) + 22, "final volume = 120 cm³", "end"));
+      txt.innerHTML = "<p>The height of the flat part tells you <b>how much product</b> was made. You can calculate it from the moles of the limiting reagent:</p>" +
+        '<div class="calc"><span>' + EQ_MG + "</span><span>n(Mg) = 0.12 ÷ 24 = <b>0.0050 mol</b></span><span>Mg : H₂ = 1 : 1 → n(H₂) = <b>0.0050 mol</b></span><span>V(H₂) = 0.0050 × 24 000 = <b>120 cm³</b> ✓</span></div>" +
+        '<p class="key">Final volume depends ONLY on the moles of the limiting reagent — not on how fast the reaction is.</p><div id="cp"></div>';
+      checkpoint($("cp"), "a4", "The experiment is repeated with 0.18 g of magnesium (acid still in excess). What is the final volume of hydrogen?", ["180 cm³", "120 cm³", "240 cm³", "90 cm³"], 0,
+        "n(Mg) = 0.18 ÷ 24 = 0.0075 mol → 0.0075 mol H₂ → 0.0075 × 24 000 = 180 cm³.");
+    } },
+  { part: "Part B · Mass of reaction mixture", title: "Following mass loss on a balance",
+    render: function (vis, txt) {
+      vis.innerHTML = '<div class="svgbox">' + apparatusMass() + "</div>" + graphBox("Mass of flask + contents against time", "g1");
+      var f = tutFrameMass(), draw = function (t) { $("g1").innerHTML = svgWrap(f, traceSvg(f, TUT_CA, t)); };
+      draw(0); drawApparatus("mass", 0);
+      txt.innerHTML = '<div class="calc"><b>' + EQ_CA + "</b><span>1.00 g of CaCO₃ chips + 50.0 cm³ of 1.0 mol/dm³ HCl (excess)</span><span>Starting mass of flask + contents = 150.00 g</span></div>" +
+        "<p>Carbon dioxide <b>escapes</b> from the flask, so the <b>mass of the flask and contents decreases</b>. The cotton wool lets the gas out but stops acid spray escaping.</p>" +
+        runButton("Run the reaction") + '<p class="key" id="watch">This time the graph goes <b>down</b>. Watch how quickly the mass falls at different times.</p>';
+      $("btn-run").addEventListener("click", function () {
+        var b = this; b.disabled = true; b.textContent = "Reacting…"; Sound.tap();
+        runSim("mass", draw, function () { b.disabled = false; b.textContent = "↻ Run again"; $("watch").innerHTML = "The mass drops <b>quickly at first</b>, then <b>more slowly</b>, then <b>stays constant</b> once all the CaCO₃ has reacted."; });
+      });
+    } },
+  { part: "Part B · Mass of reaction mixture", title: "Reading a mass curve", cp: "b2",
+    render: function (vis, txt) {
+      vis.innerHTML = '<div class="seg" id="view" role="group" aria-label="Graph to show"><button class="tap" type="button" data-v="m" aria-pressed="true">Mass of flask</button><button class="tap" type="button" data-v="l" aria-pressed="false">Loss in mass</button><button class="tap" type="button" data-v="v" aria-pressed="false">Volume of CO₂</button></div>' + graphBox("", "g1");
+      var draw = function (v) {
+        var f, s;
+        if (v === "m") { f = tutFrameMass(); s = curveSvg(f, TUT_CA, "c-main") + tag(f.X(10), f.Y(149.6), "steepest drop = fastest", "start") + tag(f.X(148), f.Y(149.56) - 10, "flat = stopped", "end"); }
+        else if (v === "l") { f = frame({ xMax: 150, yMin: 0, yMax: 0.5, yStep: 0.1, dec: 2, yLabel: "Loss in mass / g" }); s = curveSvg(f, cv(0, 0.44, 0.44 / 30, 1), "c-main") + tag(f.X(148), f.Y(0.44) + 22, "0.44 g of CO₂ lost", "end"); }
+        else { f = frame({ xMax: 150, yMin: 0, yMax: 300, yStep: 60, yLabel: "Volume of CO₂ / cm³" }); s = curveSvg(f, cv(0, 240, 8, 1), "c-main") + tag(f.X(148), f.Y(240) + 22, "240 cm³ of CO₂", "end"); }
+        $("g1").innerHTML = svgWrap(f, s);
+      };
+      draw("m");
+      Array.prototype.forEach.call(vis.querySelectorAll("#view .tap"), function (b) { b.addEventListener("click", function () {
+        Array.prototype.forEach.call(vis.querySelectorAll("#view .tap"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        Sound.tap(); draw(b.dataset.v); }); });
+      txt.innerHTML = "<p>Read a mass curve the same way, just upside down:</p>" +
+        '<ol class="rules"><li><b>Steepest drop at the start</b>= fastest rate (initial gradient).</li><li><b>Levels off</b>= reaction has stopped; the limiting reagent (CaCO₃) is used up.</li></ol>' +
+        '<p class="key">Tap the buttons above: the <b>loss in mass</b> graph is the mass graph flipped, and it has the same shape as the <b>volume of CO₂</b> graph.</p><div id="cp"></div>';
+      checkpoint($("cp"), "b2", "On a mass-of-flask graph, a FASTER reaction (same amounts) would show…", ["A steeper drop at the start", "A steeper rise at the start", "A lower final mass", "A higher starting mass"], 0,
+        "Faster = more CO₂ lost per second = a steeper downward slope at the start. The final mass stays the same because the amounts haven't changed.");
+    } },
+  { part: "Part B · Mass of reaction mixture", title: "Final mass ↔ moles of limiting reagent", cp: "b3",
+    render: function (vis, txt) {
+      vis.innerHTML = graphBox("Mass lost = mass of CO₂ given off", "g1");
+      var f = tutFrameMass();
+      $("g1").innerHTML = svgWrap(f, '<line class="c-guide" x1="' + f.X(0) + '" x2="' + f.X(150) + '" y1="' + f.Y(149.56) + '" y2="' + f.Y(149.56) + '"/>' + curveSvg(f, TUT_CA, "c-main") +
+        tag(f.X(148), f.Y(149.56) - 10, "final mass = 149.56 g", "end") + tag(f.X(148), f.Y(150) + 22, "start = 150.00 g", "end"));
+      txt.innerHTML = '<div class="calc"><span>n(CaCO₃) = 1.00 ÷ 100 = <b>0.010 mol</b></span><span>CaCO₃ : CO₂ = 1 : 1 → n(CO₂) = <b>0.010 mol</b></span><span>mass of CO₂ = 0.010 × 44 = <b>0.44 g</b></span><span>final mass = 150.00 − 0.44 = <b>149.56 g</b> ✓</span></div>' +
+        '<p class="key">Final mass = starting mass − mass of gas lost. Double the moles of limiting reagent → double the mass lost.</p><div id="cp"></div>';
+      checkpoint($("cp"), "b3", "With 0.50 g of CaCO₃ instead, the starting mass is 149.50 g. What is the final mass?", ["149.28 g", "149.06 g", "149.50 g", "149.34 g"], 0,
+        "n(CaCO₃) = 0.50 ÷ 100 = 0.0050 mol → 0.0050 × 44 = 0.22 g of CO₂ lost → 149.50 − 0.22 = 149.28 g.");
+    } },
+  { part: "Part B · Mass of reaction mixture", title: "Why not weigh Mg + HCl?", cp: "b4",
+    render: function (vis, txt) {
+      vis.innerHTML = graphBox("Loss in mass for each reaction", "g1");
+      var f = frame({ xMax: 150, yMin: 0, yMax: 0.5, yStep: 0.1, dec: 2, yLabel: "Loss in mass / g" });
+      $("g1").innerHTML = svgWrap(f, curveSvg(f, cv(0, 0.44, 0.44 / 30, 1), "c-main") + curveSvg(f, cv(0, 0.01, 0.01 / 20, 1), "c-new") +
+        tag(f.X(148), f.Y(0.44) + 22, "CaCO₃ + HCl: 0.44 g", "end") + tag(f.X(148), f.Y(0.01) - 10, "Mg + HCl: only 0.01 g", "end"));
+      txt.innerHTML = '<div class="calc"><span>Mg + HCl: n(H₂) = 0.0050 mol → 0.0050 × 2 = <b>0.010 g</b></span><span>CaCO₃ + HCl: n(CO₂) = 0.010 mol → 0.010 × 44 = <b>0.44 g</b></span></div>' +
+        "<p>Hydrogen is very light (M<sub>r</sub> = 2), so the mass hardly changes. A gas syringe is a better way to follow this reaction.</p><div id=\"cp\"></div>";
+      checkpoint($("cp"), "b4", "Why is measuring loss in mass a poor method for Mg + HCl?", ["H₂ is very light, so the mass change is too small to measure accurately", "Hydrogen does not escape from the flask", "Magnesium gains mass as it reacts", "The balance cannot be used with acids"], 0,
+        "Only 0.010 g of H₂ is lost — too small a change for a school balance to show clearly.");
+    } },
+  { part: "Part C · Comparing curves", title: "Try it: change one condition",
+    render: function (vis, txt) {
+      var SB = sandbox();
+      vis.innerHTML = '<div class="seg" id="sb-base" role="group" aria-label="Reaction"><button class="tap" type="button" data-b="mgV" aria-pressed="true">Mg + HCl (volume)</button><button class="tap" type="button" data-b="caM" aria-pressed="false">CaCO₃ + HCl (mass)</button></div>' +
+        graphBox("", "g1") + '<div class="legend"><span><i></i>original</span><span><i class="n"></i>after the change</span></div>';
+      txt.innerHTML = '<ol class="rules"><li><b>① Faster or slower?</b>→ initial gradient. Temperature, concentration, particle size' + (course === "pure" ? ", catalyst" : "") + ".</li><li><b>② More or less product?</b>→ final height. Only the moles of the <u>limiting reagent</u> matter.</li></ol>" +
+        '<p class="cap" style="margin:0">Pick a change</p><div class="chips" id="sb-chips"></div><div class="readout" id="sb-out"></div>';
+      var cur = { b: "mgV", i: 0 };
+      function paint() {
+        var b = BASES[cur.b], list = SB[cur.b], ch = list[cur.i], S = ch.S || b.S0;
+        var o = cv(b.S0, b.A0, b.g0, isMass(b) ? -1 : 1), n = cv(S, b.A0 * ch.f, b.g0 * ch.g, o.dir), f = frame(axisFor(b, [b.S0, S]));
+        $("g1").innerHTML = svgWrap(f, curveSvg(f, o, "c-orig") + curveSvg(f, n, "c-new"));
+        $("sb-chips").innerHTML = list.map(function (c, i) { return '<button class="tap" type="button" data-i="' + i + '" aria-pressed="' + (i === cur.i) + '">' + c.t + "</button>"; }).join("");
+        Array.prototype.forEach.call($("sb-chips").querySelectorAll(".tap"), function (x) { x.addEventListener("click", function () { cur.i = +x.dataset.i; Sound.tap(); paint(); }); });
+        var c1 = cat(ch.g), fin = isMass(b) ? S - b.A0 * ch.f : b.A0 * ch.f;
+        $("sb-out").innerHTML = "<div>Initial gradient: <b>" + (c1 === "same" ? "same" : c1 === "steeper" ? "steeper (faster)" : "less steep (slower)") + "</b></div><div>" + finalWord(b) + ": <b>" + fmt(b, fin) + "</b> " + (ch.f === 1 ? "(unchanged)" : ch.f > 1 ? "(more product)" : "(less product)") + "</div><div style=\"font-weight:600\">" + ch.why + "</div>";
+      }
+      Array.prototype.forEach.call(vis.querySelectorAll("#sb-base .tap"), function (x) { x.addEventListener("click", function () {
+        cur.b = x.dataset.b; cur.i = 0; Sound.tap();
+        Array.prototype.forEach.call(vis.querySelectorAll("#sb-base .tap"), function (y) { y.setAttribute("aria-pressed", y === x ? "true" : "false"); }); paint(); }); });
+      paint();
+    } }
+];
+function sandbox() {
+  var mg = [
+    { t: "40 °C", g: 2, f: 1, why: "More energetic particles → more effective collisions per second. Same Mg → same volume." },
+    { t: "15 °C", g: 0.5, f: 1, why: "Fewer effective collisions per second. Same Mg → same volume." },
+    { t: "2.0 mol/dm³ acid", g: 2, f: 1, why: "More H⁺ ions per unit volume → more frequent collisions. Mg is still limiting → same volume." },
+    { t: "Mg powder", g: 2, f: 1, why: "Larger surface area → more frequent collisions. Same mass of Mg → same volume." },
+    { t: "Catalyst", g: 2, f: 1, why: "Lower activation energy → more effective collisions. Catalysts don't change the amount of product.", pure: true },
+    { t: "0.24 g Mg", g: 1.5, f: 2, why: "Twice the moles of the limiting reagent → twice the H₂ (240 cm³). More ribbon → larger total surface area → steeper." },
+    { t: "0.06 g Mg", g: 0.75, f: 0.5, why: "Half the moles of Mg → half the H₂ (60 cm³). Less ribbon → smaller surface area → less steep." },
+    { t: "100 cm³ of the same acid", g: 1, f: 1, why: "Same concentration → same rate. The acid was already in excess → same volume." }
+  ];
+  var ca = [
+    { t: "40 °C", g: 2, f: 1, why: "Faster → steeper drop. Same CaCO₃ → same 0.44 g lost." },
+    { t: "15 °C", g: 0.5, f: 1, why: "Slower → gentler drop. Same CaCO₃ → same 0.44 g lost." },
+    { t: "2.0 mol/dm³ acid", g: 2, f: 1, why: "More frequent collisions → steeper drop. CaCO₃ still limiting → same final mass." },
+    { t: "Powder", g: 2, f: 1, why: "Larger surface area → steeper drop. Same mass of CaCO₃ → same final mass." },
+    { t: "Larger chips", g: 0.5, f: 1, why: "Smaller surface area → gentler drop. Same final mass." },
+    { t: "Catalyst", g: 2, f: 1, why: "Lower activation energy → steeper drop. Same final mass.", pure: true },
+    { t: "2.00 g CaCO₃", g: 1.5, f: 2, S: 151, why: "Starting mass goes up by 1.00 g (151.00 g). Twice the moles → 0.88 g of CO₂ lost → 150.12 g. More chips → larger surface area → steeper." },
+    { t: "0.50 g CaCO₃", g: 0.75, f: 0.5, S: 149.5, why: "Starting mass goes down by 0.50 g (149.50 g). Half the moles → 0.22 g lost → 149.28 g. Fewer chips → less steep." }
+  ];
+  function keep(c) { return !c.pure || course === "pure"; }
+  return { mgV: mg.filter(keep), caM: ca.filter(keep) };
+}
+
+function startTut(student) {
+  TUT = { student: student, i: 0, cp: {}, solved: {}, startedAt: Date.now() };
+  show("scr-tut"); renderTut();
+}
+function renderTut() {
+  stopSim();
+  var st = STEPS[TUT.i];
+  $("tut-part").textContent = st.part; $("tut-title").textContent = st.title;
+  $("tut-dots").innerHTML = STEPS.map(function (s, i) { return '<i class="' + (i === TUT.i ? "now" : i < TUT.i ? "ok" : "") + '"></i>'; }).join("");
+  st.render($("tut-vis"), $("tut-txt"));
+  paintTutNav();
+  window.scrollTo(0, 0);
+}
+function paintTutNav() {
+  var st = STEPS[TUT.i];
+  $("tut-back").disabled = TUT.i === 0;
+  $("tut-next").textContent = TUT.i === STEPS.length - 1 ? "Finish ✓" : "Next →";
+  $("tut-next").disabled = !!st.cp && !TUT.solved[st.cp];
+  $("tut-next").title = $("tut-next").disabled ? "Answer the quick check first" : "";
+}
+$("tut-back").addEventListener("click", function () { if (TUT.i > 0) { TUT.i--; Sound.tap(); renderTut(); } });
+$("tut-next").addEventListener("click", function () { Sound.tap(); if (TUT.i < STEPS.length - 1) { TUT.i++; renderTut(); } else finishTut(); });
+$("tut-exit").addEventListener("click", function () { stopSim(); paintStart(); show("scr-start"); });
+
+function finishTut() {
+  stopSim(); store("rate-tut-done", true);
+  var keys = STEPS.filter(function (s) { return s.cp; }).map(function (s) { return s.cp; });
+  var first = keys.filter(function (k) { return TUT.cp[k]; }).length, secs = (Date.now() - TUT.startedAt) / 1000, pct = Math.round(100 * first / keys.length);
+  var name = TUT.student.name.split(" ")[0];
+  G = { mode: "tutorial", student: TUT.student };
+  $("res-ring").style.setProperty("--p", pct); $("res-pct").textContent = pct + "%";
+  $("res-title").textContent = "Tutorial complete, " + name + "!";
+  $("res-msg").textContent = "You can now read volume and mass graphs. Ready to predict some curves?";
+  $("res-l1").textContent = "Quick checks first try"; $("res-v1").textContent = first + "/" + keys.length;
+  $("res-l2").textContent = "Course"; $("res-v2").textContent = course === "pure" ? "Pure" : "Combined";
+  $("res-time").textContent = mmss(secs); $("res-l4").textContent = "Steps"; $("res-v4").textContent = STEPS.length;
+  $("res-panel1").hidden = true; $("res-panel2").hidden = true;
+  $("btn-again").textContent = "Start the challenge 🏆";
+  show("scr-result"); Sound.end();
+  var labels = { a2: "Fastest rate", a3: "Why it goes flat", a4: "Final volume calc", b2: "Mass curve", b3: "Final mass calc", b4: "Why not weigh H₂" };
+  var missed = keys.filter(function (k) { return !TUT.cp[k]; }).map(function (k) { return labels[k]; });
+  send({ course: SHEET_TAB, chapter: "Tutorial · " + (course === "pure" ? "Pure Chem" : "Combined Sci"), name: TUT.student.name, cls: TUT.student.cls, reg: TUT.student.reg,
+    score: first, total: keys.length, wrong: missed.join("; ") || "None", time: Math.round(secs), points: 0,
+    summary: "Tutorial quick checks right first time: " + first + "/" + keys.length + (missed.length ? " | Needed a second try: " + missed.join(", ") : "") });
+}
+
+/* =================== CHALLENGE =================== */
+function axisFor(b, starts) {
+  if (!isMass(b)) return { xMax: X_MAX, yMin: 0, yMax: b.A0 * 2.25, yStep: b.A0 / 4, yLabel: yLabelOf(b) };
+  var step = b.A0 / 4, hi = Math.max.apply(null, starts), lo = Math.min.apply(null, starts);
+  return { xMax: X_MAX, yMin: lo - 2.25 * b.A0, yMax: hi + step, yStep: step, anchor: b.S0, labEvery: 2, dec: 2, yLabel: yLabelOf(b) };
+}
+function origCurve(b) { return cv(b.S0, b.A0, b.g0, isMass(b) ? -1 : 1); }
+function poolFor() { return QS.filter(function (q) { return course === "pure" || q.course === "both"; }); }
+function sig(g, f) { return cat(g) + "|" + f; }
+function whyOptions(q) {
+  var seen = {}, out = [];
+  seen[sig(q.g, q.f)] = 1;
+  shuffle(poolFor().filter(function (x) { return x.base === q.base && x.id !== q.id && !x.S; })).forEach(function (x) {
+    var k = sig(x.g, x.f); if (!seen[k] && out.length < 3) { seen[k] = 1; out.push(x); }
+  });
+  return out.length === 3 ? out : null;
+}
+function buildRound() {
+  var pool = poolFor(), used = {}, out = [];
+  function take(list, n, type) {
+    var got = 0;
+    shuffle(list).forEach(function (q) { if (got < n && !used[q.id]) { used[q.id] = 1; got++; out.push({ q: q, type: type }); } });
+  }
+  var t1 = pool.filter(function (q) { return q.tier === 1; });
+  take(t1.filter(function (q) { return q.types.indexOf("pick") > -1; }), ROUND.pick, "pick");
+  take(t1.filter(function (q) { return q.types.indexOf("why") > -1 && whyOptions(q); }), ROUND.why, "why");
+  take(t1.filter(function (q) { return q.types.indexOf("handle") > -1; }), ROUND.tier1, "handle");
+  take(pool.filter(function (q) { return q.tier === 2; }), ROUND.tier2, "handle");
+  take(pool.filter(function (q) { return q.tier === 3; }), ROUND.tier3, "handle");
+  return out;
+}
+function startGame(student) {
+  G = { mode: "challenge", student: student, items: buildRound(), i: 0, points: 0, streak: 0, bestStreak: 0, log: [], hints: 0, startedAt: Date.now(), done: false };
+  $("res-panel1").hidden = false; $("res-panel2").hidden = false;
+  show("scr-play"); renderQ();
+}
+function paintHud() {
+  $("txt-points").textContent = G.points;
+  $("txt-count").textContent = "Q" + Math.min(G.i + 1, G.items.length) + " of " + G.items.length;
+  $("txt-combo").hidden = G.streak < 2; $("txt-combo").textContent = "🔥 ×" + G.streak;
+  $("dots").innerHTML = G.items.map(function (it, i) {
+    var l = G.log[i], c = i === G.i && !l ? "now" : !l ? "" : l.marks === l.total ? "ok" : l.marks > 0 ? "half" : "no";
+    return '<i class="' + c + '"></i>';
+  }).join("");
+}
+function newCurve(q, b, g, f) { return cv(q.S || b.S0, b.A0 * f, b.g0 * g, isMass(b) ? -1 : 1); }
+function finalVal(q, b, f) { return isMass(b) ? (q.S || b.S0) - b.A0 * f : b.A0 * f; }
+
+function renderQ() {
+  var it = G.items[G.i], q = it.q, b = BASES[q.base];
+  G.cur = { it: it, answered: false };
+  $("hint-box").hidden = true;
+  $("q-base").innerHTML = '<span class="lbl">Original experiment</span><span>' + esc(b.desc) + '</span><span class="eq">' + b.eq + '</span><span class="data">' + esc(b.data) + "</span>";
+  $("q-change").innerHTML = '<span class="lbl">The change</span><span>' + esc(q.change) + "</span>";
+  paintHud();
+  if (it.type === "pick") renderPick(q, b); else if (it.type === "why") renderWhy(q, b); else renderHandle(q, b);
+}
+
+/* ---- MCQ: pick the curve ---- */
+function renderPick(q, b) {
+  var right = { g: CAT_R[cat(q.g)], f: q.f }, all = [];
+  [0.5, 1, 2].forEach(function (g) { [0.5, 1, 2].forEach(function (f) { if (!(g === right.g && f === right.f)) all.push({ g: g, f: f }); }); });
+  var a = shuffle(all.filter(function (o) { return o.f === right.f; }))[0], c = shuffle(all.filter(function (o) { return o.g === right.g; }))[0];
+  var d = shuffle(all.filter(function (o) { return o !== a && o !== c && o.g !== right.g && o.f !== right.f; }))[0];
+  var opts = shuffle([right, a, c, d]);
+  var o = origCurve(b), f0 = axisFor(b, [b.S0, q.S || b.S0]);
+  $("stage").innerHTML = '<p class="ask">Which graph shows the new experiment?<small>Dashed grey = original. Orange = new.</small></p><div class="opts4" id="opts"></div><div id="fb"></div>';
+  $("opts").innerHTML = opts.map(function (op, i) {
+    var f = frame(Object.assign({}, f0, { mini: true, w: 200, h: 140 }));
+    return '<button class="optg" type="button" data-i="' + i + '"><b>' + "ABCD"[i] + "</b>" + svgWrap(f, curveSvg(f, o, "c-orig") + curveSvg(f, newCurve(q, b, op.g, op.f), "c-new")) + "</button>";
+  }).join("");
+  Array.prototype.forEach.call($("opts").querySelectorAll(".optg"), function (btn) {
+    btn.addEventListener("click", function () {
+      if (G.cur.answered) return; G.cur.answered = true;
+      var op = opts[+btn.dataset.i], rateOk = op.g === right.g, finalOk = op.f === right.f, ok = rateOk && finalOk;
+      Array.prototype.forEach.call($("opts").querySelectorAll(".optg"), function (x, i) { x.disabled = true; if (opts[i] === right) x.classList.add("ok"); });
+      if (!ok) btn.classList.add("no");
+      var you = (op.g === 1 ? "same gradient" : op.g > 1 ? "steeper" : "less steep") + ", " + (op.f === 1 ? "same final amount" : op.f > 1 ? "more product" : "less product");
+      record(q, "pick", ok ? 1 : 0, 1, rateOk, finalOk, ok ? "" : "chose: " + you);
+      feedback(ok, [partLine("Initial gradient", rateOk, CAT_TXT[cat(q.g)]), partLine(finalWord(b), finalOk, fmt(b, finalVal(q, b, q.f)))], q.why);
+    });
+  });
+}
+/* ---- MCQ: what changed? ---- */
+function renderWhy(q, b) {
+  var opts = shuffle([q].concat(whyOptions(q))), o = origCurve(b), f = frame(axisFor(b, [b.S0]));
+  $("q-change").innerHTML = '<span class="lbl">Your job</span><span>Something was changed and the orange curve was obtained. What was the change?</span>';
+  $("stage").innerHTML = '<p class="ask">What change gives the orange curve?</p>' + '<div class="svgbox">' + svgWrap(f, curveSvg(f, o, "c-orig") + curveSvg(f, newCurve(q, b, CAT_R[cat(q.g)], q.f), "c-new")) + "</div>" +
+    '<div class="legend"><span><i></i>original</span><span><i class="n"></i>new</span></div><div class="ctrl" id="opts"></div><div id="fb"></div>';
+  $("opts").innerHTML = opts.map(function (x, i) { return '<button class="choice" type="button" data-i="' + i + '">' + esc(x.change) + "</button>"; }).join("");
+  Array.prototype.forEach.call($("opts").querySelectorAll(".choice"), function (btn) {
+    btn.addEventListener("click", function () {
+      if (G.cur.answered) return; G.cur.answered = true;
+      var pick = opts[+btn.dataset.i], ok = pick === q;
+      Array.prototype.forEach.call($("opts").querySelectorAll(".choice"), function (x, i) { x.disabled = true; if (opts[i] === q) x.classList.add("ok"); });
+      if (!ok) btn.classList.add("no");
+      record(q, "why", ok ? 1 : 0, 1, ok || cat(pick.g) === cat(q.g), ok || pick.f === q.f, ok ? "" : "chose: " + pick.change);
+      feedback(ok, [], q.why);
+    });
+  });
+}
+/* ---- Drag the curve ---- */
+var RATIOS = [1 / 3, 1 / 2, 2 / 3, 1, 1.5, 2, 3];
+function renderHandle(q, b) {
+  var o = origCurve(b), S = q.S || b.S0, dir = o.dir, ax = axisFor(b, [b.S0, S]), f = frame(ax);
+  var H = { ri: 3, k: 4, drag: null, locked: false };
+  var step = b.A0 / 4;
+  $("stage").innerHTML = '<p class="ask">Drag the orange curve to show the new experiment.<small>Move the <b>tangent handle</b> to set the initial gradient, and the <b>final handle</b> to set the ' + (isMass(b) ? "final mass" : "final volume") + ".</small></p>" +
+    '<div class="svgbox drag" id="hg"><svg viewBox="0 0 ' + f.W + " " + f.H + '" role="img" aria-label="Graph with draggable curve"></svg></div>' +
+    '<div class="legend"><span><i></i>original</span><span><i class="n"></i>your curve</span>' + (isMass(b) && S !== b.S0 ? "<span>New starting mass: " + S.toFixed(2) + " g</span>" : "") + '</div>' +
+    '<div class="ctrl"><div class="ctrl-row"><span class="lbl">Initial gradient</span><div class="seg" id="segG"><button class="tap" type="button" data-r="1">Less steep</button><button class="tap" type="button" data-r="3">Same</button><button class="tap" type="button" data-r="5">Steeper</button></div></div>' +
+    '<div class="ctrl-row"><span class="lbl">' + finalWord(b) + '</span><div class="stepper"><button class="tap" type="button" id="kdn" aria-label="Lower">−</button><output id="kout"></output><button class="tap" type="button" id="kup" aria-label="Higher">+</button></div></div></div>' +
+    '<button class="btn big" id="btn-check" type="button">Check my graph ✓</button><div id="fb"></div>';
+  var svg = $("hg").querySelector("svg");
+  function g() { return b.g0 * RATIOS[H.ri]; }
+  function A() { return step * H.k; }
+  function geo() {
+    var gg = g(), lim = dir > 0 ? (ax.yMax * 0.95 - S) / gg : (S - (ax.yMin + 0.05 * (ax.yMax - ax.yMin))) / gg, tEnd = Math.min(X_MAX * 0.42, lim);
+    return { tx: f.X(tEnd), ty: f.Y(S + dir * gg * tEnd), tEnd: tEnd, fx: f.X(X_MAX * 0.86), fy: f.Y(S + dir * A()) };
+  }
+  function draw(extra) {
+    var gm = geo(), n = cv(S, A(), g(), dir), og = o.g, oEnd = Math.min(X_MAX * 0.42, dir > 0 ? (ax.yMax * 0.95 - b.S0) / og : (b.S0 - (ax.yMin + 0.05 * (ax.yMax - ax.yMin))) / og);
+    var s = curveSvg(f, o, "c-orig") +
+      '<line class="c-tan-o" x1="' + f.X(0) + '" y1="' + f.Y(b.S0) + '" x2="' + f.X(oEnd) + '" y2="' + f.Y(b.S0 + dir * og * oEnd) + '"/>' +
+      '<line class="c-guide" x1="' + f.X(0) + '" x2="' + f.X(X_MAX) + '" y1="' + gm.fy + '" y2="' + gm.fy + '"/>' +
+      curveSvg(f, n, "c-new") + (extra || "") +
+      '<line class="c-tan" x1="' + f.X(0) + '" y1="' + f.Y(S) + '" x2="' + gm.tx + '" y2="' + gm.ty + '"/>';
+    if (!H.locked) {
+      s += '<circle class="c-hit" data-h="g" r="24" cx="' + gm.tx + '" cy="' + gm.ty + '"/><circle class="c-h" r="10" cx="' + gm.tx + '" cy="' + gm.ty + '" pointer-events="none"/>' +
+        tag(gm.tx + 14, gm.ty + (dir > 0 ? 4 : 18), "tangent", "start") +
+        '<circle class="c-hit" data-h="f" r="24" cx="' + gm.fx + '" cy="' + gm.fy + '"/><rect class="c-h" x="' + (gm.fx - 11) + '" y="' + (gm.fy - 11) + '" width="22" height="22" rx="6" pointer-events="none"/>' +
+        tag(gm.fx - 16, gm.fy + (dir > 0 ? 22 : -14), "final " + fmt(b, S + dir * A()), "end");
+    }
+    svg.innerHTML = f.grid + s;
+    $("kout").textContent = fmt(b, S + dir * A());
+    Array.prototype.forEach.call(document.querySelectorAll("#segG .tap"), function (x) { var r = +x.dataset.r; x.setAttribute("aria-pressed", String(cat(RATIOS[H.ri]) === cat(RATIOS[r]))); });
+  }
+  function pt(e) { var p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+  function move(p) {
+    if (H.drag === "g") {
+      var t = Math.max(1.5, f.iX(p.x)), v = f.iY(p.y), gg = dir > 0 ? (v - S) / t : (S - v) / t, r = Math.max(0.01, gg / b.g0), best = 0;
+      RATIOS.forEach(function (x, i) { if (Math.abs(Math.log(r / x)) < Math.abs(Math.log(r / RATIOS[best]))) best = i; });
+      if (best !== H.ri) { H.ri = best; Sound.tap(); }
+    } else if (H.drag === "f") {
+      var vv = f.iY(p.y), k = clamp(Math.round(dir > 0 ? vv / step : (S - vv) / step), 1, 9);
+      if (k !== H.k) { H.k = k; Sound.tap(); }
+    }
+    draw();
+  }
+  svg.addEventListener("pointerdown", function (e) {
+    if (H.locked) return;
+    var p = pt(e), gm = geo(), dg = Math.hypot(p.x - gm.tx, p.y - gm.ty), df = Math.hypot(p.x - gm.fx, p.y - gm.fy);
+    H.drag = Math.min(dg, df) > 34 ? (Math.abs(p.y - gm.fy) < 16 ? "f" : null) : dg <= df ? "g" : "f";
+    if (!H.drag) return;
+    e.preventDefault(); document.body.classList.add("dragging"); try { svg.setPointerCapture(e.pointerId); } catch (x) {}
+    move(p);
+  });
+  svg.addEventListener("pointermove", function (e) { if (H.drag) { e.preventDefault(); move(pt(e)); } });
+  function endDrag() { H.drag = null; document.body.classList.remove("dragging"); }
+  svg.addEventListener("pointerup", endDrag);
+  svg.addEventListener("pointercancel", endDrag);
+  Array.prototype.forEach.call(document.querySelectorAll("#segG .tap"), function (x) { x.addEventListener("click", function () { if (H.locked) return; H.ri = +x.dataset.r; Sound.tap(); draw(); }); });
+  $("kdn").addEventListener("click", function () { if (H.locked) return; H.k = clamp(H.k + (dir > 0 ? -1 : 1), 1, 9); Sound.tap(); draw(); });
+  $("kup").addEventListener("click", function () { if (H.locked) return; H.k = clamp(H.k + (dir > 0 ? 1 : -1), 1, 9); Sound.tap(); draw(); });
+  draw();
+  $("btn-check").addEventListener("click", function () {
+    if (G.cur.answered) return; G.cur.answered = true; H.locked = true;
+    var gc = cat(RATIOS[H.ri]), rateOk = q.accept.indexOf(gc) > -1, finalOk = H.k === Math.round(q.f * 4), marks = (rateOk ? 1 : 0) + (finalOk ? 1 : 0);
+    var right = newCurve(q, b, q.g, q.f);
+    draw(curveSvg(f, right, "c-good"));
+    $("hg").classList.remove("drag");
+    Array.prototype.forEach.call(document.querySelectorAll("#segG .tap, #kdn, #kup"), function (x) { x.disabled = true; });
+    $("btn-check").hidden = true;
+    record(q, "handle", marks, 2, rateOk, finalOk, marks === 2 ? "" : "you: gradient " + CAT_TXT[gc] + ", " + fmt(b, S + dir * A()) + "; answer: gradient " + q.accept.map(function (a) { return CAT_TXT[a]; }).join("/") + ", " + fmt(b, finalVal(q, b, q.f)));
+    feedback(marks === 2, [
+      partLine("Initial gradient", rateOk, q.accept.map(function (a) { return CAT_TXT[a]; }).join(" or "), CAT_TXT[gc]),
+      partLine(finalWord(b), finalOk, fmt(b, finalVal(q, b, q.f)), fmt(b, S + dir * A()))
+    ], q.why, true);
+  });
+}
+function partLine(label, ok, ans, you) {
+  return "<span>" + (ok ? "✓ " : "✗ ") + label + ": " + (ok ? "<b>" + esc(you || ans) + "</b>" : (you ? "you said " + esc(you) + " → " : "") + "answer <b>" + esc(ans) + "</b>") + "</span>";
+}
+function record(q, type, marks, total, rateOk, finalOk, wrongTxt) {
+  G.log[G.i] = { q: q, type: type, marks: marks, total: total, rateOk: rateOk, finalOk: finalOk, wrong: wrongTxt };
+  var full = marks === total;
+  G.points += marks * 100;
+  if (full) { G.streak++; G.bestStreak = Math.max(G.bestStreak, G.streak); if (G.streak > 1) G.points += 25 * (G.streak - 1); Sound.ok(); }
+  else { G.streak = 0; Sound.no(); }
+  quick(full ? (G.streak > 2 ? "🔥 " + G.streak + " in a row!" : "✓ Correct!") : marks > 0 ? "Half right" : "✗ Not quite", full);
+  paintHud();
+}
+function quick(text, ok) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var d = document.createElement("div"); d.className = "quick-ans" + (ok ? " ok" : ""); d.textContent = text; document.body.appendChild(d);
+  setTimeout(function () { d.remove(); }, 1300);
+}
+function feedback(ok, parts, why, showGood) {
+  var last = G.i === G.items.length - 1;
+  $("fb").innerHTML = '<div class="reveal' + (ok ? " good" : "") + '"><h3>' + (ok ? "✓ Spot on!" : "Let's check") + "</h3>" +
+    (parts.length ? '<div class="parts">' + parts.join("") + "</div>" : "") +
+    (showGood ? '<div class="legend"><span><i class="g"></i>correct curve</span></div>' : "") +
+    "<p>" + esc(why) + '</p><button class="btn big teal" id="btn-next" type="button">' + (last ? "See my results →" : "Next question →") + "</button></div>";
+  $("btn-next").addEventListener("click", function () { Sound.tap(); if (last) finish(); else { G.i++; renderQ(); window.scrollTo(0, 0); } });
+  $("btn-next").focus({ preventScroll: true });
+  $("fb").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+$("btn-hint").addEventListener("click", function () {
+  if (!G || G.mode !== "challenge") return;
+  var box = $("hint-box"); if (!box.hidden) { box.hidden = true; return; }
+  G.hints++;
+  var b = BASES[G.items[G.i].q.base];
+  box.innerHTML = "<b>Ask two questions.</b> ① Does the change make collisions more or less frequent / effective? → initial gradient. ② Does it change the <u>moles of the limiting reagent</u>? → final height. " +
+    "<br>In the original experiment, the limiting reagent is <b>" + b.lim + "</b>.";
+  box.hidden = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Enter") return;
+  var n = $("btn-next"); if (n && !$("scr-play").hidden) { e.preventDefault(); n.click(); }
+});
+
+/* =================== RESULTS =================== */
+function finish() {
+  if (G.done) return; G.done = true;
+  var log = G.log, secs = (Date.now() - G.startedAt) / 1000, first = G.student.name.split(" ")[0];
+  var marks = 0, total = 0, perfect = 0, rate = [0, 0], fin = [0, 0], byF = {}, bad = {};
+  log.forEach(function (l) {
+    marks += l.marks; total += l.total; if (l.marks === l.total) perfect++;
+    if (l.type !== "why") { rate[1]++; fin[1]++; if (l.rateOk) rate[0]++; if (l.finalOk) fin[0]++; }
+    var t = byF[l.q.factor] = byF[l.q.factor] || [0, 0]; t[0] += l.marks; t[1] += l.total;
+    if (l.marks < l.total) bad[l.q.factor] = (bad[l.q.factor] || 0) + 1;
+  });
+  var pct = total ? Math.round(100 * marks / total) : 0, key = "rate-best-" + course;
+  if (G.points > (store(key) || 0)) store(key, G.points);
+  $("res-ring").style.setProperty("--p", pct); $("res-pct").textContent = pct + "%";
+  $("res-title").textContent = pct >= 80 ? "Graph guru, " + first + "!" : pct >= 50 ? "Good work, " + first + "!" : "Keep practising, " + first + "!";
+  $("res-msg").textContent = "You scored " + marks + " out of " + total + " marks (" + (course === "pure" ? "Pure Chemistry" : "Combined Science") + ").";
+  $("res-l1").textContent = "Marks"; $("res-v1").textContent = marks + "/" + total;
+  $("res-l2").textContent = "Perfect questions"; $("res-v2").textContent = perfect + "/" + log.length;
+  $("res-time").textContent = mmss(secs); $("res-l4").textContent = "Points"; $("res-v4").textContent = G.points;
+  var rows = [["Initial gradient", rate], ["Final amount", fin]];
+  Object.keys(FACT).forEach(function (k) { if (byF[k]) rows.push([FACT[k].label, byF[k]]); });
+  $("res-bars").innerHTML = rows.map(function (r) { var p = r[1][1] ? Math.round(100 * r[1][0] / r[1][1]) : 0; return '<div class="bar-row"><span>' + esc(r[0]) + '</span><div class="bar"><i class="' + (p < 60 ? "low" : "") + '" style="width:' + p + '%"></i></div><span class="n">' + r[1][0] + "/" + r[1][1] + "</span></div>"; }).join("");
+  var weak = Object.keys(bad).sort(function (a, b) { return bad[b] - bad[a]; });
+  $("res-weak").innerHTML = weak.length ? weak.slice(0, 4).map(function (k) { return "<li><b>" + esc(FACT[k].label) + (bad[k] > 1 ? " ×" + bad[k] : "") + "</b><span>" + esc(FACT[k].tip) + "</span></li>"; }).join("")
+    : '<li class="good"><b>Nothing to fix this time!</b><span>Try again to beat your points score.</span></li>';
+  var wrong = log.filter(function (l) { return l.marks < l.total; });
+  $("res-review").innerHTML = wrong.length ? wrong.map(function (l) {
+    return "<li><b>" + esc(l.q.change) + '</b><br><span class="you">' + esc(l.wrong) + '</span><br><span class="k">✓</span> ' + esc(l.q.why) + "</li>";
+  }).join("") : "<li>No mistakes. Well done!</li>";
+  $("btn-again").textContent = "Play again ↻";
+  show("scr-result"); Sound.end(); if (pct >= 80) Confetti.go();
+  var summary = "Course: " + (course === "pure" ? "Pure Chem" : "Combined Sci") + " | Initial gradient " + rate[0] + "/" + rate[1] + " | Final amount " + fin[0] + "/" + fin[1] +
+    " | Weak: " + (weak.length ? weak.map(function (k) { return FACT[k].label + " x" + bad[k]; }).join("; ") : "none") + " | Hints: " + G.hints + " | Best combo: " + G.bestStreak;
+  send({ course: SHEET_TAB, chapter: "Challenge · " + (course === "pure" ? "Pure Chem" : "Combined Sci"), name: G.student.name, cls: G.student.cls, reg: G.student.reg,
+    score: marks, total: total, wrong: wrong.map(function (l) { return l.q.id + " (" + FACT[l.q.factor].label + "): " + l.wrong; }).join(" | ") || "None",
+    time: Math.round(secs), points: G.points, summary: summary });
+}
+function send(payload) {
+  G.payload = payload;
+  var box = $("send"), msg = $("send-msg"), btn = $("btn-resend");
+  box.className = "send span"; btn.hidden = true; msg.textContent = "Sending your results to Ms Khoo…";
+  if (!SUBMIT_URL) { msg.textContent = "Results not sent (no Google Sheet link set up)."; return; }
+  fetch(SUBMIT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+    .then(function () { msg.textContent = "✓ Sent! Ms Khoo has your results."; })
+    .catch(function () { box.className = "send span err"; msg.textContent = "Couldn't send. Check your internet, then tap Try again."; btn.hidden = false; });
+}
+$("btn-resend").addEventListener("click", function () { send(G.payload); });
+$("btn-again").addEventListener("click", function () { Confetti.stop(); startGame(G.student); });
+$("btn-home").addEventListener("click", function () { Confetti.stop(); paintStart(); show("scr-start"); });
+
+/* =================== CONFETTI =================== */
+var Confetti = {
+  c: $("confetti"), on: false,
+  go: function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var c = this.c, w = c.width = innerWidth, h = c.height = innerHeight, cols = ["#FF8243", "#FFC0CB", "#FCE883", "#069494"], p = [];
+    c.hidden = false; this.on = true;
+    for (var i = 0; i < 110; i++) p.push({ x: Math.random() * w, y: -Math.random() * h, s: 6 + Math.random() * 8, v: 2 + Math.random() * 3, a: Math.random() * 6, col: cols[i % 4] });
+    var self = this, ctx = c.getContext("2d");
+    (function loop() {
+      if (!self.on) return; ctx.clearRect(0, 0, w, h); var alive = false;
+      p.forEach(function (q) { q.y += q.v; q.a += .08; q.x += Math.sin(q.a) * 1.2; if (q.y < h + 20) alive = true;
+        ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.a); ctx.fillStyle = q.col; ctx.strokeStyle = "#1F2A2E"; ctx.lineWidth = 1.5;
+        ctx.fillRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); ctx.strokeRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); ctx.restore(); });
+      if (alive) requestAnimationFrame(loop); else self.stop();
+    })();
+  },
+  stop: function () { this.on = false; this.c.hidden = true; }
+};
+
+window.__rate = { renderQ: function () { renderQ(); }, QS: QS, BASES: BASES, buildRound: buildRound, whyOptions: whyOptions, state: function () { return { G: G, TUT: TUT, course: course }; }, setCourse: function (c) { course = c; } };
+})();
+</script>
+</body>
+</html>
