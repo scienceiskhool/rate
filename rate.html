@@ -797,7 +797,7 @@ var STEPS = [
       vis.innerHTML = '<div class="seg" id="view" role="group" aria-label="Graph to show"><button class="tap" type="button" data-v="m" aria-pressed="true">Mass of flask</button><button class="tap" type="button" data-v="l" aria-pressed="false">Loss in mass</button><button class="tap" type="button" data-v="v" aria-pressed="false">Volume of CO₂</button></div>' + graphBox("", "g1");
       var draw = function (v) {
         var f, s;
-        if (v === "m") { f = tutFrameMass(); s = curveSvg(f, TUT_CA, "c-main") + tag(f.X(10), f.Y(149.6), "steepest drop = fastest", "start") + tag(f.X(148), f.Y(149.56) - 10, "flat = stopped", "end"); }
+        if (v === "m") { f = tutFrameMass(); s = curveSvg(f, TUT_CA, "c-main") + tag(f.X(10), f.Y(150.04), "← steepest drop = fastest", "start") + tag(f.X(148), f.Y(149.56) + 26, "flat = stopped", "end"); }
         else if (v === "l") { f = frame({ xMax: 150, yMin: 0, yMax: 0.5, yStep: 0.1, dec: 2, yLabel: "Loss in mass / g" }); s = curveSvg(f, cv(0, 0.44, 0.44 / 30, 1), "c-main") + tag(f.X(148), f.Y(0.44) + 22, "0.44 g of CO₂ lost", "end"); }
         else { f = frame({ xMax: 150, yMin: 0, yMax: 300, yStep: 60, yLabel: "Volume of CO₂ / cm³" }); s = curveSvg(f, cv(0, 240, 8, 1), "c-main") + tag(f.X(148), f.Y(240) + 22, "240 cm³ of CO₂", "end"); }
         $("g1").innerHTML = svgWrap(f, s);
@@ -817,7 +817,7 @@ var STEPS = [
       vis.innerHTML = graphBox("Mass lost = mass of CO₂ given off", "g1");
       var f = tutFrameMass();
       $("g1").innerHTML = svgWrap(f, '<line class="c-guide" x1="' + f.X(0) + '" x2="' + f.X(150) + '" y1="' + f.Y(149.56) + '" y2="' + f.Y(149.56) + '"/>' + curveSvg(f, TUT_CA, "c-main") +
-        tag(f.X(148), f.Y(149.56) - 10, "final mass = 149.56 g", "end") + tag(f.X(148), f.Y(150) + 22, "start = 150.00 g", "end"));
+        tag(f.X(148), f.Y(149.56) + 26, "final mass = 149.56 g", "end") + tag(f.X(148), f.Y(150) + 22, "start = 150.00 g", "end"));
       txt.innerHTML = '<div class="calc"><span>n(CaCO₃) = 1.00 ÷ 100 = <b>0.010 mol</b></span><span>CaCO₃ : CO₂ = 1 : 1 → n(CO₂) = <b>0.010 mol</b></span><span>mass of CO₂ = 0.010 × 44 = <b>0.44 g</b></span><span>final mass = 150.00 − 0.44 = <b>149.56 g</b> ✓</span></div>' +
         '<p class="key">Final mass = starting mass − mass of gas lost. Double the moles of limiting reagent → double the mass lost.</p><div id="cp"></div>';
       checkpoint($("cp"), "b3", "With 0.50 g of CaCO₃ instead, the starting mass is 149.50 g. What is the final mass?", ["149.28 g", "149.06 g", "149.50 g", "149.34 g"], 0,
@@ -828,7 +828,7 @@ var STEPS = [
       vis.innerHTML = graphBox("Loss in mass for each reaction", "g1");
       var f = frame({ xMax: 150, yMin: 0, yMax: 0.5, yStep: 0.1, dec: 2, yLabel: "Loss in mass / g" });
       $("g1").innerHTML = svgWrap(f, curveSvg(f, cv(0, 0.44, 0.44 / 30, 1), "c-main") + curveSvg(f, cv(0, 0.01, 0.01 / 20, 1), "c-new") +
-        tag(f.X(148), f.Y(0.44) + 22, "CaCO₃ + HCl: 0.44 g", "end") + tag(f.X(148), f.Y(0.01) - 10, "Mg + HCl: only 0.01 g", "end"));
+        tag(f.X(148), f.Y(0.44) + 34, "CaCO₃ + HCl: 0.44 g", "end") + tag(f.X(148), f.Y(0.01) - 10, "Mg + HCl: only 0.01 g", "end"));
       txt.innerHTML = '<div class="calc"><span>Mg + HCl: n(H₂) = 0.0050 mol → 0.0050 × 2 = <b>0.010 g</b></span><span>CaCO₃ + HCl: n(CO₂) = 0.010 mol → 0.010 × 44 = <b>0.44 g</b></span></div>' +
         "<p>Hydrogen is very light (M<sub>r</sub> = 2), so the mass hardly changes. A gas syringe is a better way to follow this reaction.</p><div id=\"cp\"></div>";
       checkpoint($("cp"), "b4", "Why is measuring loss in mass a poor method for Mg + HCl?", ["H₂ is very light, so the mass change is too small to measure accurately", "Hydrogen does not escape from the flask", "Magnesium gains mass as it reacts", "The balance cannot be used with acids"], 0,
