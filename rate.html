@@ -349,7 +349,7 @@ var ROUND = { pick: 3, why: 1, tier1: 2, tier2: 2, tier3: 2 };   // challenge: 4
 var X_MAX = 180;                             // time axis (s) for challenge graphs
 var CLASSES = [];
 ["S1", "S2", "S3", "S4"].forEach(function (l) { ["Charity", "Courage", "Faith", "Hope", "Humility", "Integrity", "Love", "Respect", "Joy"].forEach(function (v) { CLASSES.push(l + " " + v); }); });
-CLASSES.push("S5 Faith", "Other");
+CLASSES.push("S5 Faith", "Visitor", "Other");
 
 /* =================== HELPERS =================== */
 var $ = function (id) { return document.getElementById(id); };
@@ -590,7 +590,7 @@ $("form-start").addEventListener("submit", function (e) {
   e.preventDefault();
   var mode = (e.submitter && e.submitter.dataset.mode) || lastMode;
   var name = $("in-name").value.trim(), cls = $("in-cls").value, reg = $("in-reg").value.trim();
-  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !/^\d{1,2}$/.test(reg) ? "Please type your register number (numbers only)." : !course ? "Please choose Combined Science or Pure Chemistry." : "";
+  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !(cls === "Visitor" || /^\d{1,2}$/.test(reg)) ? "Please type your register number (numbers only)." : !course ? "Please choose Combined Science or Pure Chemistry." : "";
   $("form-err").textContent = err; if (err) return;
   store("student", { name: name, cls: cls, reg: reg });
   Sound.tone(1, "sine", .01, .0001);
